@@ -1,3 +1,5 @@
-fastapi
+fastapi[standard]
 uvicorn
 pydantic
+sqlalchemy
+databases
