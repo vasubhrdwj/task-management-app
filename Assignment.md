@@ -229,7 +229,3 @@ Performance Optimisations:
 2\. Lazy load with suspense when loading long lists
 
 3\. Using pagination and infinite scroll effectively on all tables and grids
-
-Styling:
-
-1\. Make lesser use of global styled css and more of component based style sheets
