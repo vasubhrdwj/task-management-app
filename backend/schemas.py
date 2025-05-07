@@ -1,20 +1,16 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, StrictBool
 from datetime import datetime
 
-class PostBase(BaseModel):
-    title: str
-    content: str
-    published: bool = True
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    is_admin: StrictBool
 
-class PostCreate(PostBase):
-    pass
 
-class PostUpdate(PostBase):
-    pass
-
-class PostResponse(PostBase):
+class UserResponse(UserCreate):
     id: int
     created_at: datetime
+    is_admin: bool
 
     class Config:
         from_attributes = True
