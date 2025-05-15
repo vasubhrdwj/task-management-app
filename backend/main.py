@@ -17,7 +17,7 @@ def root():
     return "This is currently running at port 8000"
 
 
-@app.post("/users/", response_model=schemas.UserResponse, status_code=201)
+@app.post("/users/", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     hashed_password = utils.hash_password(user.password)
     user.password = hashed_password
@@ -28,4 +28,11 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     return new_user
 
-# @app.get("/users/")
+@app.get("/users/{id}", response_model=schemas.UserResponse, status_code=status.HTTP_202_ACCEPTED)
+def get_user(id : int, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == id).first()
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'user with id:{id} not found')
+
+    return user
