@@ -7,8 +7,8 @@ class UserCreate(BaseModel):
     is_admin: StrictBool
 
 
-class UserResponse(UserCreate):
-    id: int
+class UserResponse(BaseModel):
+    email: EmailStr
     created_at: datetime
     is_admin: bool
 

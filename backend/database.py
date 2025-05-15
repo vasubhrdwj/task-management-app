@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-SQL_ALCHEMY_DB_URL = "postgresql://postgres:cucumberslice@winhost/postgres"
+SQL_ALCHEMY_DB_URL = "postgresql://postgres:password@localhost/task_management_db"
 
 engine = create_engine(SQL_ALCHEMY_DB_URL)
 

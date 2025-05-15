@@ -5,7 +5,7 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key = True, index = True)
-    name = Column(String)
+    # name = Column(String)
     email = Column(String, index = True, unique = True, nullable = False)
     password = Column(String, nullable = False)
     is_admin = Column(Boolean, nullable=False)
