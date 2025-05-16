@@ -60,3 +60,16 @@ def update_task(task: schemas.Task, id: int, db: Session = Depends(get_db)):
 
 
 # Delete
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(id: int, db: Session = Depends(get_db)):
+    query_task = db.query(models.Tasks).filter(models.Tasks.id == id)
+    query_task_instance = query_task.first()
+
+    if not query_task_instance:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"task with id:{id} not found"
+        )
+
+    query_task.delete(synchronize_session=False)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
