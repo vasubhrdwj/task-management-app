@@ -22,7 +22,7 @@ class Tasks(Base):
     title = Column(String, nullable=False, index=True)
     description = Column(String)
     is_complete = Column(Boolean, server_default="False")
-    due_date = Column(DateTime)
+    due_date = Column(DateTime(timezone=True), default=text("now()"))
     priority = Column(
         Enum(
             Priority,

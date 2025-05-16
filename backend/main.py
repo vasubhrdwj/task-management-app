@@ -1,16 +1,12 @@
-from typing import Annotated, List, Optional
-from fastapi import FastAPI, Query, status, Response, HTTPException, Depends
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
-from .models import User
-from . import models, schemas, utils
-from .database import get_db, engine, Base
-from .routers import user
+from fastapi import FastAPI
 
+from .database import Base, engine
+from .routers import user, tasks
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
 
 @app.get("/")
 def root():
@@ -18,4 +14,4 @@ def root():
 
 
 app.include_router(user.router)
-
+app.include_router(tasks.router)
