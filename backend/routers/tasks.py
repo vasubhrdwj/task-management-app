@@ -17,7 +17,17 @@ def create_task(task: schemas.TaskCreate, db : Session = Depends(get_db)):
 
     return new_task
 
-# Read
+# Read ( Get )
+
+@router.get("/{id}", response_model=schemas.TaskResponse, status_code=status.HTTP_202_ACCEPTED)
+def get_task(id: int, db : Session = Depends(get_db)):
+
+    task = db.query(models.Tasks).filter(models.Tasks.id == id).first()
+
+    if not task:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'task with id:{id} not found')
+    
+    return task
 
 
 # Update
