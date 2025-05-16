@@ -3,8 +3,6 @@ from typing import Optional
 from datetime import datetime
 from .constants import Priority
 
-
-
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
@@ -25,7 +23,7 @@ class Task(BaseModel):
     description: str
     is_complete: StrictBool
     # due_date: datetime
-    priority: Optional[Priority] = None
+    priority: Optional[Priority] = Priority.medium
 
 
 class TaskResponse(Task):
@@ -35,3 +33,8 @@ class TaskResponse(Task):
     class Config:
         from_attributes = True
         use_enum_values = True
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str

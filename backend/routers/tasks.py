@@ -60,7 +60,7 @@ def update_task(task: schemas.Task, id: int, db: Session = Depends(get_db)):
 
 
 # Delete
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_task(id: int, db: Session = Depends(get_db)):
     query_task = db.query(models.Tasks).filter(models.Tasks.id == id)
     query_task_instance = query_task.first()
