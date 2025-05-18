@@ -3,6 +3,6 @@ uvicorn
 pydantic
 sqlalchemy
 databases
-bcrypt
+bcrypt == 4.0.1
 passlib
 python-jose
