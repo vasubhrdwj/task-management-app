@@ -11,7 +11,7 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
 @router.post(
     "/create", response_model=schemas.TaskResponse, status_code=status.HTTP_201_CREATED
 )
-def create_task(task: schemas.Task, db: Session = Depends(get_db)):
+def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
     new_task = models.Tasks(**task.model_dump())
     db.add(new_task)
     db.commit()
@@ -42,7 +42,7 @@ def get_task(id: int, db: Session = Depends(get_db)):
     response_model=schemas.TaskResponse,
     status_code=status.HTTP_202_ACCEPTED,
 )
-def update_task(task: schemas.Task, id: int, db: Session = Depends(get_db)):
+def update_task(task: schemas.TaskCreate, id: int, db: Session = Depends(get_db)):
     query_task = db.query(models.Tasks).filter(models.Tasks.id == id)
     query_task_instance = query_task.first()
 

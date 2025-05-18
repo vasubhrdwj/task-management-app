@@ -18,7 +18,7 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-class Task(BaseModel):
+class TaskCreate(BaseModel):
     title: str
     description: str
     is_complete: StrictBool
@@ -26,7 +26,7 @@ class Task(BaseModel):
     priority: Optional[Priority] = Priority.medium
 
 
-class TaskResponse(Task):
+class TaskResponse(TaskCreate):
     id: StrictInt
     due_date: datetime
 
