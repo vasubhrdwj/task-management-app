@@ -22,7 +22,7 @@ class TaskCreate(BaseModel):
     title: str
     description: str
     is_complete: StrictBool
-    # due_date: datetime
+    due_date: datetime
     priority: Optional[Priority] = Priority.medium
 
 
