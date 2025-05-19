@@ -51,12 +51,7 @@ def get_task(
     response_model=schemas.TaskResponse,
     status_code=status.HTTP_202_ACCEPTED,
 )
-def update_task(
-    task: schemas.TaskCreate,
-    id: int,
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(oauth2.get_current_user),
-):
+def update_task(task: schemas.TaskCreate, id: int, db: Session = Depends(get_db)):
     query_task = db.query(models.Tasks).filter(models.Tasks.id == id)
     query_task_instance = query_task.first()
 
