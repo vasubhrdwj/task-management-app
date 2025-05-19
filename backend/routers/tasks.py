@@ -74,8 +74,15 @@ def update_task(
 
 
 # Delete
-@router.delete("/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_task(id: int, db: Session = Depends(get_db)):
+@router.delete(
+    "/delete/{id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_task(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user),
+):
     query_task = db.query(models.Tasks).filter(models.Tasks.id == id)
     query_task_instance = query_task.first()
 
