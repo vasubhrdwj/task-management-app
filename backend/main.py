@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from .database import Base, engine
 from .routers import user, tasks, auth
+from datetime import datetime
 
 Base.metadata.create_all(bind=engine)
 
@@ -10,7 +11,7 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    return "This is currently running at port 8000"
+    return "This app is currently running at port 8000"
 
 
 app.include_router(auth.router)
