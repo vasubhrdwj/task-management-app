@@ -17,20 +17,28 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
 )
 def get_tasks(
     sort_by: str | None = None,
+    sort_desc: bool = False,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
     tasks = db.query(models.Tasks).filter(models.Tasks.user_email == current_user.email)
     if not sort_by:
-        return tasks
-
-    if sort_by == "priority":
+        tasks = tasks.all()
+    elif sort_by == "priority":
         priority_order = case(
             (models.Tasks.priority == Priority.high.value, 1),
             (models.Tasks.priority == Priority.medium.value, 2),
             (models.Tasks.priority == Priority.low.value, 3),
         )
         tasks = tasks.order_by(priority_order).all()
+    elif sort_by == "due_date":
+        tasks = tasks.order_by(models.Tasks.due_date).all()
+    elif sort_by == "status":
+        tasks = tasks.order_by(models.Tasks.is_complete).all()
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail=f"Not a valid value"
+        )
 
     return tasks
 
