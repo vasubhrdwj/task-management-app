@@ -17,7 +17,8 @@ def create_task(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
-    new_task = models.Tasks(user_id=current_user.id, **task.model_dump())
+    new_task = models.Tasks(user_email=current_user.email, **task.model_dump())
+
     db.add(new_task)
     db.commit()
     db.refresh(new_task)

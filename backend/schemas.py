@@ -29,6 +29,7 @@ class TaskCreate(BaseModel):
 
 class TaskResponse(TaskCreate):
     due_date: datetime
+    user_email: str
 
     class Config:
         from_attributes = True

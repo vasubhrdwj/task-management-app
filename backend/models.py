@@ -57,7 +57,7 @@ class Tasks(Base):
     )
 
     # User relationship
-    user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE")
+    user_email: Mapped[str] = mapped_column(
+        String, ForeignKey("users.email", ondelete="CASCADE")
     )
     owner = relationship("User", back_populates="task")
