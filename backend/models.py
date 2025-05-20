@@ -1,6 +1,4 @@
 from sqlalchemy import (
-    Column,
-    Integer,
     String,
     Boolean,
     TIMESTAMP,
@@ -39,12 +37,16 @@ class User(Base):
 class Tasks(Base):
     __tablename__ = "tasks"
 
-    id = Column(Integer, primary_key=True)
-    title = Column(String, nullable=False, index=True)
-    description = Column(String)
-    is_complete = Column(Boolean, server_default="False")
-    due_date = Column(DateTime(timezone=True), default=text("now()"))
-    priority = Column(
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
+    )
+    title: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    description: Mapped[str] = mapped_column(String(255))
+    is_complete: Mapped[bool] = mapped_column(Boolean, server_default="False")
+    due_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("now()")
+    )
+    priority: Mapped[Enum] = mapped_column(
         Enum(
             Priority,
             name="priority_enum",  # this becomes the PG type name
@@ -55,5 +57,7 @@ class Tasks(Base):
     )
 
     # User relationship
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE")
+    )
     owner = relationship("User", back_populates="task")

@@ -17,7 +17,7 @@ def create_task(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
-    new_task = models.Tasks(**task.model_dump())
+    new_task = models.Tasks(user_id=current_user.id, **task.model_dump())
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
@@ -81,7 +81,7 @@ def update_task(
 def delete_task(
     id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(oauth2.get_current_user ),
+    current_user: models.User = Depends(oauth2.get_current_user),
 ):
     query_task = db.query(models.Tasks).filter(models.Tasks.id == id)
     query_task_instance = query_task.first()

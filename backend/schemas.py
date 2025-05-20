@@ -28,7 +28,6 @@ class TaskCreate(BaseModel):
 
 
 class TaskResponse(TaskCreate):
-    id: StrictInt
     due_date: datetime
 
     class Config:
