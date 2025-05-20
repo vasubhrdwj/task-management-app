@@ -68,7 +68,11 @@ def update_task(
 
     query_task_email = query_task_instance.user_email
 
-    # if query_task_email
+    if query_task_email != current_user.email:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Cannot update other users task",
+        )
 
     query_task.update(task.model_dump(), synchronize_session=False)  # type: ignore[reportGeneralTypeIssues]
     db.commit()
@@ -94,6 +98,14 @@ def delete_task(
     if not query_task_instance:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"task with id:{id} not found"
+        )
+
+    query_task_email = query_task_instance.user_email
+
+    if query_task_email != current_user.email:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Cannot delete other users task",
         )
 
     query_task.delete(synchronize_session=False)
