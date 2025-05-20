@@ -21,8 +21,7 @@ class User(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
     )
-
-    # name = Column(String)
+    name = Column(String)
     email = Column(String, index=True, unique=True, nullable=False)
     password = Column(String, nullable=False)
     is_admin = Column(Boolean, nullable=False)

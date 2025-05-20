@@ -3,17 +3,18 @@ from typing import Optional
 from datetime import datetime
 from .constants import Priority
 
-class UserCreate(BaseModel):
+
+class UserBase(BaseModel):
     email: EmailStr
-    password: str
     is_admin: StrictBool
+    full_name: Optional[str | None]
 
 
-class UserResponse(BaseModel):
-    email: EmailStr
-    created_at: datetime
-    is_admin: bool
+class UserCreate(UserBase):
+    password: str
 
+
+class UserResponse(UserBase):
     class Config:
         from_attributes = True
 
@@ -39,9 +40,11 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+
 class Token(BaseModel):
-    access_token : str
+    access_token: str
     token_type: str
+
 
 class TokenData(BaseModel):
     id: Optional[str] = None
