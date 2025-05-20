@@ -1,28 +1,36 @@
 from fastapi import APIRouter, status, Response, HTTPException, Depends
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from .. import models, schemas, utils
 from backend.database import get_db
 from ..routers import oauth2
-
+from sqlalchemy import case
+from ..constants import Priority
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
 @router.get(
     "/",
-    response_model=List[schemas.TaskListResponse],
+    response_model=List[schemas.TaskListResponse] | str,
     status_code=status.HTTP_202_ACCEPTED,
 )
 def get_tasks(
+    sort_by: str | None = None,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
-    tasks = (
-        db.query(models.Tasks)
-        .filter(models.Tasks.user_email == current_user.email)
-        .all()
-    )
+    tasks = db.query(models.Tasks).filter(models.Tasks.user_email == current_user.email)
+    if not sort_by:
+        return tasks
+
+    if sort_by == "priority":
+        priority_order = case(
+            (models.Tasks.priority == Priority.high.value, 1),
+            (models.Tasks.priority == Priority.medium.value, 2),
+            (models.Tasks.priority == Priority.low.value, 3),
+        )
+        tasks = tasks.order_by(priority_order).all()
 
     return tasks
 

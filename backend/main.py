@@ -6,7 +6,7 @@ from datetime import datetime
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(swagger_ui_parameters={"persistAuthorization": True})
 
 
 @app.get("/")

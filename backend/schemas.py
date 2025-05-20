@@ -41,6 +41,7 @@ class TaskResponse(TaskCreate):
 class TaskListResponse(TaskCreate):
     due_date: datetime
     user_email: str
+    id : int
 
     class Config:
         from_attributes = True
