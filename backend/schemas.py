@@ -31,6 +31,8 @@ class TaskResponse(TaskCreate):
     due_date: datetime
     user_email: str
 
+    owner: UserResponse
+
     class Config:
         from_attributes = True
         use_enum_values = True

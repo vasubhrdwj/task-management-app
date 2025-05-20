@@ -37,9 +37,7 @@ class User(Base):
 class Tasks(Base):
     __tablename__ = "tasks"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
-    )
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String, nullable=False, index=True)
     description: Mapped[str] = mapped_column(String(255))
     is_complete: Mapped[bool] = mapped_column(Boolean, server_default="False")

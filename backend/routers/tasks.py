@@ -66,6 +66,10 @@ def update_task(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"task with id:{id} not found"
         )
 
+    query_task_email = query_task_instance.user_email
+
+    # if query_task_email
+
     query_task.update(task.model_dump(), synchronize_session=False)  # type: ignore[reportGeneralTypeIssues]
     db.commit()
 
