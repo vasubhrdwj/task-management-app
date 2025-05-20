@@ -1,11 +1,30 @@
 from fastapi import APIRouter, status, Response, HTTPException, Depends
 from sqlalchemy.orm import Session
+from typing import List
 from .. import models, schemas, utils
 from backend.database import get_db
 from ..routers import oauth2
 
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
+
+
+@router.get(
+    "/",
+    response_model=List[schemas.TaskListResponse],
+    status_code=status.HTTP_202_ACCEPTED,
+)
+def get_tasks(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user),
+):
+    tasks = (
+        db.query(models.Tasks)
+        .filter(models.Tasks.user_email == current_user.email)
+        .all()
+    )
+
+    return tasks
 
 
 # Create

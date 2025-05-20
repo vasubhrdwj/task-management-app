@@ -38,6 +38,14 @@ class TaskResponse(TaskCreate):
         use_enum_values = True
 
 
+class TaskListResponse(TaskCreate):
+    due_date: datetime
+    user_email: str
+
+    class Config:
+        from_attributes = True
+
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
