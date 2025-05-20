@@ -9,11 +9,13 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
 )
+from pydantic import EmailStr
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from .database import Base
 from .constants import Priority
+from datetime import datetime
 
 
 class User(Base):
@@ -21,13 +23,17 @@ class User(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
     )
-    name = Column(String)
-    email = Column(String, index=True, unique=True, nullable=False)
-    password = Column(String, nullable=False)
-    is_admin = Column(Boolean, nullable=False)
-    created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
+    full_name: Mapped[str] = mapped_column(String(50))
+    email: Mapped[EmailStr] = mapped_column(
+        String, index=True, unique=True, nullable=False
+    )
+    password: Mapped[str] = mapped_column(String, nullable=False)
+    is_admin: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=text("now()")
+    )
 
-    # tasks = relationship("Tasks", backref="users")
+    task = relationship("Tasks", back_populates="owner")
 
 
 class Tasks(Base):
@@ -49,5 +55,5 @@ class Tasks(Base):
     )
 
     # User relationship
-    # user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    # owner = relationship("User")
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+    owner = relationship("User", back_populates="task")
