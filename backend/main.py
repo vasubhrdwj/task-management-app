@@ -4,7 +4,8 @@ from .database import Base, engine
 from .routers import user, tasks, auth
 from datetime import datetime
 
-Base.metadata.create_all(bind=engine)
+# If not using alembic,(for dev purposes)
+# Base.metadata.create_all(bind=engine)
 
 app = FastAPI(swagger_ui_parameters={"persistAuthorization": True})
 
