@@ -76,7 +76,7 @@ def create_task(
         )
 
     new_task = models.Tasks(user_email=current_user.email, **task.model_dump())
- 
+
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
