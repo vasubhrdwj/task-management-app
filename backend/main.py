@@ -3,12 +3,27 @@ from fastapi import FastAPI
 from .database import Base, engine
 from .routers import user, tasks, auth
 from datetime import datetime
+from fastapi.middleware.cors import CORSMiddleware
 
 # If not using alembic,(for dev purposes)
 # Base.metadata.create_all(bind=engine)
 
 # app = FastAPI(swagger_ui_parameters={"persistAuthorization": True})
 app = FastAPI()
+
+origins = [
+    "http://localhost:5173/",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
