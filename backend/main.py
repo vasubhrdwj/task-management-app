@@ -7,7 +7,8 @@ from datetime import datetime
 # If not using alembic,(for dev purposes)
 # Base.metadata.create_all(bind=engine)
 
-app = FastAPI(swagger_ui_parameters={"persistAuthorization": True})
+# app = FastAPI(swagger_ui_parameters={"persistAuthorization": True})
+app = FastAPI()
 
 
 @app.get("/")
@@ -16,6 +17,5 @@ def root():
 
 
 app.include_router(auth.router)
-
 app.include_router(user.router)
 app.include_router(tasks.router)

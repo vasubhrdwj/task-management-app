@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status, Response, HTTPException, Depends
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from pydantic import EmailStr
 from .. import models, schemas, utils
 from backend.database import get_db
 from ..routers import oauth2
@@ -59,15 +60,23 @@ def get_tasks(
 
 # Create
 @router.post(
-    "/create", response_model=schemas.TaskResponse, status_code=status.HTTP_201_CREATED
+    "/create/{email_id}",
+    response_model=schemas.TaskResponse,
+    status_code=status.HTTP_201_CREATED,
 )
 def create_task(
     task: schemas.TaskCreate,
+    email_id: EmailStr,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
-    new_task = models.Tasks(user_email=current_user.email, **task.model_dump())
+    if current_user.is_admin == False:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Not required permissions"
+        )
 
+    new_task = models.Tasks(user_email=current_user.email, **task.model_dump())
+ 
     db.add(new_task)
     db.commit()
     db.refresh(new_task)

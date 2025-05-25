@@ -22,7 +22,7 @@ class UserResponse(UserBase):
 class TaskCreate(BaseModel):
     title: str
     description: str
-    is_complete: StrictBool
+    is_complete: StrictBool = False
     due_date: datetime
     priority: Optional[Priority] = Priority.medium
 
@@ -41,7 +41,7 @@ class TaskResponse(TaskCreate):
 class TaskListResponse(TaskCreate):
     due_date: datetime
     user_email: str
-    id : int
+    id: int
 
     class Config:
         from_attributes = True

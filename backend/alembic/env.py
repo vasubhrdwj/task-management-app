@@ -2,9 +2,17 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from database import Base
 
 from alembic import context
+import os, sys
+
+# append the parent of this file (i.e. backend/) to PYTHONPATH
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + "/../.."))
+
+
+from backend.database import Base
+from backend.models import User, Tasks
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
