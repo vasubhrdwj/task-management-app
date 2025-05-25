@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from "react";
-import api from "./api";
+import { React, useState } from "react";
 
 const App = () => {
-  const [tasks, setTasks] = useState([]);
+  const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      const response = await api.get("/tasks/");
-      setTasks(response.data);
-    };
-
-    fetchItems();
-  }, []);
-
+  function handleClick() {
+    setCount(count + 1);
+  }
   return (
     <div>
-      <h1>Tasks:</h1>
-      <pre>{JSON.stringify(tasks, null, 2)}</pre>
+      <h1>Counters updating seperately</h1>
+      <MyButton onClick={handleClick} count={count} />
+      <MyButton onClick={handleClick} count={count} />
     </div>
   );
 };
 
+function MyButton({ count, onClick }) {
+  return <button onClick={onClick}> Clicked {count} times</button>;
+}
 export default App;
