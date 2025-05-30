@@ -41,10 +41,10 @@ const App = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="login-form">
+      <form onSubmit={handleSubmit} className="max-w-sm mx-auto p-4">
         {error && <p className="error-log">{error}</p>}
 
-        <label className="form-label">
+        <label className="block mb-4">
           <span>Email Address :</span>
           <input
             type="email"
