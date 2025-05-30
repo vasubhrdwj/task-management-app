@@ -15,6 +15,8 @@ const App = () => {
       setError("Both fields are required");
       return;
     }
+
+    setLoading(true);
     try {
       console.log(email);
       const response = await api.post(
@@ -29,11 +31,14 @@ const App = () => {
           },
         }
       );
-      console.log(response.data);
+      console.log("Success! ", response.data);
     } catch (error) {
-      console.log(error);
+      setError(error.response?.data?.detail || "Login Failed");
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div>
       <div>
