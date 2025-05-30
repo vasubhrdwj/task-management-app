@@ -1,50 +1,34 @@
 import React, { useState } from "react";
 import api from "./api";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
-const App = () => {
+export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [type, setType] = useState("password");
+  const [show, setShow] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleToggle = () => setShow((s) => !s);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError("");
-
     if (!email || !password) {
-      setError("Both fields are required");
-      return;
+      return setError("Both fields are required");
     }
-
     setLoading(true);
     try {
-      console.log(email);
       const response = await api.post(
         "/login",
-        new URLSearchParams({
-          username: email,
-          password: password,
-        }),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
+        new URLSearchParams({ username: email, password }),
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       );
-      console.log("Success! ", response.data);
-    } catch (error) {
-      setError(error.response?.data?.detail || "Login Failed");
+      console.log("Success!", response.data);
+    } catch (err) {
+      setError(err.response?.data?.detail || "Login Failed");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleToggle = async () => {
-    if (type === "password") {
-      setType("text");
-    } else {
-      setType("password");
     }
   };
 
@@ -54,51 +38,51 @@ const App = () => {
         onSubmit={handleSubmit}
         className="bg-white rounded-2xl shadow-lg p-10 w-full max-w-sm"
       >
-        <h2 className="text-2xl font-bold mb-12 text-center">Login</h2>
+        <h2 className="text-2xl font-bold mb-8 text-center">Login</h2>
         {error && <p className="text-red-600 mb-4 text-sm">{error}</p>}
 
-        <label className="block mb-8 text-base font-medium">
-          <span>Email Address :</span>
+        <label className="block mb-6">
+          <span className="text-base font-medium">Email Address</span>
           <input
             type="email"
             value={email}
-            placeholder="Email Address"
+            placeholder="you@example.com"
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full rounded border p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 block w-full rounded border p-2 focus:ring-2 focus:ring-blue-400"
+            required
           />
         </label>
 
-        <label className="block mb-8 text-base font-medium">
-          <span>Password:</span>
-          <div className="flex items-center mt-1 border rounded px-2">
+        <label className="block mb-8">
+          <span className="text-base font-medium">Password</span>
+          <div className="flex items-center border rounded px-2 mt-1">
             <input
-              type={type}
-              name="password"
+              type={show ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="flex-1 p-2 focus:outline-none"
+              required
             />
-            <span
+            <button
+              type="button"
               onClick={handleToggle}
-              className="cursor-pointer text-gray-600 hover:text-gray-800"
+              className="p-2 text-gray-600 hover:text-gray-800 focus:outline-none"
+              aria-label="Toggle password visibility"
             >
-              👁️{" "}
-              {/* Replace with an icon from lucide-react, heroicons, or fontawesome */}
-            </span>
+              {show ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+            </button>
           </div>
         </label>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition disabled:opacity-50 mb-12 mt-6"
+          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Logging in…" : "Login"}
         </button>
       </form>
     </div>
   );
-};
-
-export default App;
+}
