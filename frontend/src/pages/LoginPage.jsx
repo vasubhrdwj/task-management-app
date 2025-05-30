@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import api from "../api";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -82,6 +83,15 @@ export default function Login() {
         >
           {loading ? "Logging in…" : "Login"}
         </button>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Don’t have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-blue-600 hover:underline font-medium"
+          >
+            Sign up
+          </Link>
+        </p>
       </form>
     </div>
   );
