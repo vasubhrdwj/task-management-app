@@ -15,9 +15,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (!email || !password) {
-      return setError("Both fields are required");
-    }
+
     setLoading(true);
     try {
       const response = await api.post(
@@ -84,7 +82,7 @@ export default function Login() {
           {loading ? "Logging in…" : "Login"}
         </button>
         <p className="mt-4 text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link
             to="/signup"
             className="text-blue-600 hover:underline font-medium"
