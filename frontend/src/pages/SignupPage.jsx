@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import api from "../api";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -14,8 +15,16 @@ const Signup = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
-    console.log("here");
-    return;
+    setLoading(true);
+
+    try {
+      const response = await api.post("/users/create");
+      console.log("Success!", response.data);
+    } catch (err) {
+      setError(err.response?.data?.detail || "Login Failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleToggle = () => setShow((s) => !s);
@@ -26,6 +35,7 @@ const Signup = () => {
         className="bg-white rounded-2xl shadow-lg p-10 w-full max-w-sm"
       >
         <h2 className="text-2xl font-bold mb-10 text-center">Sign Up</h2>
+        {error && <p className="text-red-600 mb-2 text-base">{error}</p>}
 
         <label className="block mb-8">
           <span className="text-base font-medium">Name: </span>
