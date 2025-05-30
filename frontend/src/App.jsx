@@ -7,7 +7,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
 
@@ -41,33 +41,31 @@ const App = () => {
 
   return (
     <div>
-      <div>
-        <label htmlFor="email" className="form-label">
-          Email Address:
+      <form onSubmit={handleSubmit} className="login-form">
+        {error && <p className="error-log">{error}</p>}
+
+        <label className="form-label">
+          <span>Email Address :</span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </label>
-        <input
-          type="email"
-          className="form-control"
-          id="email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="password" className="form-label">
-          Password:
+
+        <label className="form-label">
+          <span>Password: </span>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </label>
-        <input
-          type="password"
-          className="form-control"
-          id="password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <div className="login-btn">
-        <button type="submit" onClick={handleLogin}>
-          Login
+
+        <button type="submit" disabled={loading} className="submit-btn">
+          {loading ? "Logging in..." : "Login"}
         </button>
-      </div>
+      </form>
     </div>
   );
 };
