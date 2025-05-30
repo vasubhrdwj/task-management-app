@@ -4,7 +4,17 @@ import api from "./api";
 const App = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleLogin = async () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    setError("");
+
+    if (!email || !password) {
+      setError("Both fields are required");
+      return;
+    }
     try {
       console.log(email);
       const response = await api.post(
