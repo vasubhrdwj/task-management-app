@@ -39,10 +39,10 @@ export default function Login() {
         onSubmit={handleSubmit}
         className="bg-white rounded-2xl shadow-lg p-10 w-full max-w-sm"
       >
-        <h2 className="text-2xl font-bold mb-8 text-center">Login</h2>
-        {error && <p className="text-red-600 mb-4 text-sm">{error}</p>}
+        <h2 className="text-2xl font-bold mb-10 text-center">Login</h2>
+        {error && <p className="text-red-600 mb-2 text-base">{error}</p>}
 
-        <label className="block mb-6">
+        <label className="block mb-10">
           <span className="text-base font-medium">Email Address</span>
           <input
             type="email"
@@ -54,7 +54,7 @@ export default function Login() {
           />
         </label>
 
-        <label className="block mb-8">
+        <label className="block mb-18">
           <span className="text-base font-medium">Password</span>
           <div className="flex items-center border rounded px-2 mt-1">
             <input
