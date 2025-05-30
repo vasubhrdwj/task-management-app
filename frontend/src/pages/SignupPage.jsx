@@ -18,7 +18,12 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const response = await api.post("/users/create");
+      const response = await api.post("/users/create", {
+        email: email,
+        full_name: name,
+        is_admin: isAdmin,
+        password: password,
+      });
       console.log("Success!", response.data);
     } catch (err) {
       setError(err.response?.data?.detail || "Login Failed");
@@ -60,16 +65,14 @@ const Signup = () => {
             required
           />
         </label>
-        <label className="block mb-8">
-          <span className="text-base font-medium">
-            Is this an Admin Account?
-          </span>
+        <label className="inline-flex items-center space-x-2 mb-8">
           <input
             type="checkbox"
             checked={isAdmin}
             onChange={(e) => setIsAdmin(e.target.checked)}
-            className="mt-1 block w-full rounded border p-2 focus:ring-2 focus:ring-blue-400"
+            className="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-400 rounded"
           />
+          <span className="text-base font-medium">Admin account?</span>
         </label>
         <label className="block mb-12">
           <span className="text-base font-medium">Password</span>
