@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import api from "../api";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
 
-  const { accessToken, setAccessToken } = useContext(AuthContext);
+  const { setAccessToken } = useContext(AuthContext);
 
   const handleToggle = () => setShow((s) => !s);
 
