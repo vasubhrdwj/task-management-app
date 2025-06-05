@@ -25,7 +25,6 @@ const Signup = () => {
         password: password,
       });
       console.log("Success!", response.data);
-
     } catch (err) {
       setError(err.response?.data?.detail || "Signup Failed");
     } finally {
