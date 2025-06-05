@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import api from "../api";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { AuthContext } from "./contexts/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,6 +10,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
+
+  const { accessToken, setAccessToken } = useContext(AuthContext);
 
   const handleToggle = () => setShow((s) => !s);
 
@@ -23,7 +26,12 @@ export default function Login() {
         new URLSearchParams({ username: email, password }),
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       );
-      console.log("Success!", response.data);
+
+      const { access_token } = response.data;
+
+      setAccessToken(access_token);
+
+      console.log("Succesfully Logged In!!", access_token);
     } catch (err) {
       setError(err.response?.data?.detail || "Login Failed");
     } finally {
