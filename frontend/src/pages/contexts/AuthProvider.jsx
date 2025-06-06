@@ -19,7 +19,7 @@ export default function AuthContextProvider({ children }) {
   useEffect(() => {
     if (accessToken) {
       api
-        .get("users/me", {
+        .get("/users/me", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

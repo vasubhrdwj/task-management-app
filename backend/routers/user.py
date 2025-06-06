@@ -33,6 +33,11 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
+
+@router.get("/me", response_model=schemas.UserResponse, status_code=status.HTTP_200_OK)
+def read_users_me(current_user: models.User = Depends(oauth2.get_current_user)):
+    return current_user
+
 @router.get(
     "/{email}",
     response_model=schemas.UserResponse,
@@ -50,6 +55,3 @@ def get_user(email: str, db: Session = Depends(get_db)):
     return user
 
 
-@router.get("/me", response_model=schemas.UserResponse, status_code=status.HTTP_200_OK)
-def read_users_me(current_user: models.User = Depends(oauth2.get_current_user)):
-    return current_user

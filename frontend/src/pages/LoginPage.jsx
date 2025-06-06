@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import api from "../api";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "./contexts/AuthContext";
 
 export default function Login() {
@@ -12,6 +12,8 @@ export default function Login() {
   const [show, setShow] = useState(false);
 
   const { setAccessToken } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const handleToggle = () => setShow((s) => !s);
 
@@ -31,7 +33,7 @@ export default function Login() {
 
       setAccessToken(access_token);
 
-      console.log("Succesfully Logged In!!", access_token);
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.detail || "Login Failed");
     } finally {
