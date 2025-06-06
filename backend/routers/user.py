@@ -2,6 +2,7 @@ from fastapi import APIRouter, status, Response, HTTPException, Depends
 from sqlalchemy.orm import Session
 from .. import models, schemas, utils
 from backend.database import get_db
+from . import oauth2
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -47,3 +48,8 @@ def get_user(email: str, db: Session = Depends(get_db)):
         )
 
     return user
+
+
+@router.get("/me", response_model=schemas.UserResponse, status_code=status.HTTP_200_OK)
+def read_users_me(current_user: models.User = Depends(oauth2.get_current_user)):
+    return current_user
