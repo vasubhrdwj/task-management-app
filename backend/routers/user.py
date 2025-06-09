@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from .. import models, schemas, utils
 from backend.database import get_db
 from . import oauth2
+from typing import List
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -33,10 +34,10 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-
 @router.get("/me", response_model=schemas.UserResponse, status_code=status.HTTP_200_OK)
 def read_users_me(current_user: models.User = Depends(oauth2.get_current_user)):
     return current_user
+
 
 @router.get(
     "/{email}",
@@ -55,3 +56,12 @@ def get_user(email: str, db: Session = Depends(get_db)):
     return user
 
 
+@router.get(
+    "/",
+    response_model=List[schemas.UserResponse],
+    status_code=status.HTTP_200_OK,
+)
+def get_all_users(db: Session = Depends(get_db)):
+    user = db.query(models.User).all()
+
+    return user

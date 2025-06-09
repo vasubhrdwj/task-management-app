@@ -40,7 +40,7 @@ const Dashboard = () => {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, initialized]);
 
   if (!initialized) {
     return null;
