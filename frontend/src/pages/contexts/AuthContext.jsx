@@ -5,4 +5,6 @@ export const AuthContext = createContext({
   setAccessToken: () => {},
   user: null,
   setUser: () => {},
+  initialized: false,
+  setInitialized: () => {},
 });

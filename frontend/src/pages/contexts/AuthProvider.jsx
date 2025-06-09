@@ -7,6 +7,7 @@ export default function AuthContextProvider({ children }) {
     () => localStorage.getItem("accessToken") || null
   );
   const [user, setUser] = useState(null);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     if (accessToken) {
@@ -17,29 +18,35 @@ export default function AuthContextProvider({ children }) {
   }, [accessToken]);
 
   useEffect(() => {
-    if (accessToken) {
-      api
-        .get("/users/me", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-        .then((res) => {
-          setUser(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          setAccessToken(null);
-          setUser(null);
-        });
-    } else {
+    if (!accessToken) {
       setUser(null);
+      setInitialized(true);
+      return;
     }
+
+    setInitialized(false);
+    api
+      .get("/users/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setAccessToken(null);
+        setUser(null);
+      })
+      .finally(() => {
+        setInitialized(true);
+      });
   }, [accessToken]);
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, setAccessToken, user, setUser }}
+      value={{ accessToken, setAccessToken, user, setUser, initialized }}
     >
       {children}
     </AuthContext.Provider>
