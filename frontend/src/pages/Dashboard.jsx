@@ -58,9 +58,9 @@ const Dashboard = () => {
         <div>{user.is_admin ? "Admin Privilege" : ""}</div>
       </div>
       <div className="flex h-9/10">
-        <div className="basis-1/5 bg-amber-50 border-t-4 border-gray-600"></div>
+        <div className="basis-1/5 bg-amber-50"></div>
         <div className="basis-4/5 bg-gray-50 p-10">
-          <h1 className="font-bold text-2xl">Tasks:</h1>
+          <h1 className="font-bold text-2xl mb-10">Tasks:</h1>
           {loading && <div>Loading tasks…</div>}
           {error && <div className="text-red-600">{error}</div>}
           {!loading && !error && tasks.length === 0 && (
@@ -74,7 +74,6 @@ const Dashboard = () => {
                   key={t.id}
                   className="bg-white shadow rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between"
                 >
-                  {/* Left: Description & Title */}
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-gray-800 mb-1">
                       {t.title}
@@ -82,9 +81,7 @@ const Dashboard = () => {
                     <p className="text-gray-600">{t.description}</p>
                   </div>
 
-                  {/* Right: Priority & Status */}
                   <div className="mt-4 md:mt-0 flex items-center space-x-4">
-                    {/* Priority badge */}
                     <span
                       className={`
             px-2 py-1 rounded-full text-xs font-medium
