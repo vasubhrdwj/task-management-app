@@ -8,6 +8,7 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userList, setUserList] = useState([]);
 
   useEffect(() => {
     if (!initialized || !user) {
@@ -42,6 +43,30 @@ const Dashboard = () => {
     };
   }, [user, initialized]);
 
+  useEffect(() => {
+    if (!initialized || !user) return;
+
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const res = await api.get("/users");
+
+        if (!cancelled) {
+          setUserList(res.data);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Failed to fetch users", err);
+        }
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, initialized]);
+
   if (!initialized) {
     return null;
   }
@@ -58,7 +83,21 @@ const Dashboard = () => {
         <div>{user.is_admin ? "Admin Privilege" : ""}</div>
       </div>
       <div className="flex h-9/10">
-        <div className="basis-1/5 bg-amber-50"></div>
+        <div className="basis-1/5 bg-amber-50">
+          <h3 className="font-bold text-xl m-5 mb-8">Users:</h3>
+          <ul>
+            {userList.map((u) => (
+              <li
+                key={u.email}
+                className="border-1 rounded-md border-fuchsia-200 p-5 m-4 bg-fuchsia-200 text-center"
+              >
+                {u.full_name}
+                <br />
+                {u.is_admin ? "Is Admin" : "Not Admin"}
+              </li>
+            ))}
+          </ul>
+        </div>
         <div className="basis-4/5 bg-gray-50 p-10">
           <h1 className="font-bold text-2xl mb-10">Tasks:</h1>
           {loading && <div>Loading tasks…</div>}
