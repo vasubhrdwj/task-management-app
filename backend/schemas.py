@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr, StrictBool, StrictInt
-from typing import Optional
+from pydantic import BaseModel, EmailStr, StrictBool, field_validator
+from typing import Optional, Any
 from datetime import datetime
 from .constants import Priority
 
@@ -25,6 +25,14 @@ class TaskCreate(BaseModel):
     is_complete: StrictBool = False
     due_date: datetime
     priority: Optional[Priority] = Priority.medium
+
+    @field_validator("priority", mode="before")
+    @classmethod
+    def lower_case(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            return value.lower()
+
+        return value
 
 
 class TaskResponse(TaskCreate):
