@@ -6,6 +6,7 @@ import TaskCard from "../Components/TaskCard";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
+
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
