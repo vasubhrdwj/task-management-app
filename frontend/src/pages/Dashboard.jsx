@@ -1,14 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AuthContext } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
-import api from "../api";
 import TaskCard from "../Components/TaskCard";
 import { useTasks, useUsers } from "../hooks/useApi";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
 
-  const [userList, setUserList] = useState([]);
+  // const [userList, setUserList] = useState([]);
   const [sortParams, setSortParams] = useState(null);
   const [showFilterOptions, setShowFilterOptions] = useState(false);
 
@@ -22,31 +21,11 @@ const Dashboard = () => {
     setSortParams({ sort_by, sort_desc });
   };
 
-  // useEffect(() => {
-  //   if (!initialized || !user) return;
-
-  //   let cancelled = false;
-
-  //   async function load() {
-  //     try {
-  //       const res = await api.get("/users");
-
-  //       if (!cancelled) {
-  //         setUserList(res.data);
-  //       }
-  //     } catch (err) {
-  //       if (!cancelled) {
-  //         console.error("Failed to fetch users", err);
-  //       }
-  //     }
-  //   }
-  //   load();
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, [user, initialized]);
-
-  
+  const {
+    data: userList,
+    isLoading: usersLoading,
+    error: usersError,
+  } = useUsers(user && initialized);
 
   if (!initialized) {
     return null;
@@ -67,8 +46,10 @@ const Dashboard = () => {
         {/* Users Display */}
         <div className="basis-1/5 bg-amber-50">
           <h3 className="font-bold text-xl m-5 mb-8">Users:</h3>
+          {usersLoading && <p>Loading users...</p>}
+          {usersError && <p className="text-red-600">{usersError}</p>}
           <ul>
-            {userList.map((u) => (
+            {userList?.map((u) => (
               <li
                 key={u.email}
                 className="border-1 rounded-md border-fuchsia-200 p-5 m-4 bg-fuchsia-200 text-center"
@@ -80,6 +61,8 @@ const Dashboard = () => {
             ))}
           </ul>
         </div>
+
+        {/* Tasks Display */}
         <div className="basis-4/5 bg-gray-50 p-10">
           <div className="pl-4 pr-6 flex justify-between mb-10">
             <h1 className="font-bold text-2xl">Tasks:</h1>

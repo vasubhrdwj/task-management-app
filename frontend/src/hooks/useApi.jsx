@@ -26,9 +26,9 @@ export function useTasks(params) {
   });
 }
 
-export function useUsers(params) {
+export function useUsers() {
   return useQuery({
-    queryKey: ["users", params],
+    queryKey: ["users"],
     queryFn: async () => {
       const response = await api.get("/users");
       return await response.data;
