@@ -3,14 +3,11 @@ import { AuthContext } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import api from "../api";
 import TaskCard from "../Components/TaskCard";
-import { useTasks } from "../hooks/useApi";
+import { useTasks, useUsers } from "../hooks/useApi";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
 
-  // const [tasks, setTasks] = useState([]);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
   const [userList, setUserList] = useState([]);
   const [sortParams, setSortParams] = useState(null);
   const [showFilterOptions, setShowFilterOptions] = useState(false);
@@ -21,88 +18,35 @@ const Dashboard = () => {
     error: tasksError,
   } = useTasks(user && initialized ? sortParams : null);
 
-  // const loadTasks = async (sortParam = "", sortDesc) => {
-  //   const token = localStorage.getItem("accessToken");
-  //   setLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     const resp = await api.get(
-  //       `/tasks${
-  //         sortParam ? `?sort_by=${sortParam}&sort_desc=${sortDesc}` : ""
-  //       }`,
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     );
-  //     setTasks(resp.data);
-  //   } catch (err) {
-  //     setError(err.message || "Failed to fetch tasks");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleSort = (sort_by, sort_desc = "false") => {
     setSortParams({ sort_by, sort_desc });
   };
 
   // useEffect(() => {
-  //   if (!initialized || !user) {
-  //     return;
-  //   }
-  //   const token = localStorage.getItem("accessToken");
+  //   if (!initialized || !user) return;
 
   //   let cancelled = false;
+
   //   async function load() {
   //     try {
-  //       setLoading(true);
-  //       const resp = await api.get("/tasks", {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       });
+  //       const res = await api.get("/users");
+
   //       if (!cancelled) {
-  //         setTasks(resp.data);
+  //         setUserList(res.data);
   //       }
   //     } catch (err) {
   //       if (!cancelled) {
-  //         setError(err.message || "Failed to fetch tasks");
-  //       }
-  //     } finally {
-  //       if (!cancelled) {
-  //         setLoading(false);
+  //         console.error("Failed to fetch users", err);
   //       }
   //     }
   //   }
-
   //   load();
   //   return () => {
   //     cancelled = true;
   //   };
   // }, [user, initialized]);
 
-  useEffect(() => {
-    if (!initialized || !user) return;
-
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const res = await api.get("/users");
-
-        if (!cancelled) {
-          setUserList(res.data);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          console.error("Failed to fetch users", err);
-        }
-      }
-    }
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [user, initialized]);
+  
 
   if (!initialized) {
     return null;
@@ -241,7 +185,7 @@ const FilterOptions = ({ handleSort, setShowFilterOptions }) => {
             onClick={() => handleSort("status")}
             className="flex-1 px-3 py-2 text-xs font-medium text-orange-700 bg-orange-50 border border-orange-200 rounded-md hover:bg-orange-100 hover:shadow transition"
           >
-            🕗 Pending
+            🕗 Ongoing
           </button>
         </div>
       </div>

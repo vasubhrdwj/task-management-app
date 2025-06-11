@@ -25,3 +25,13 @@ export function useTasks(params) {
     },
   });
 }
+
+export function useUsers(params) {
+  return useQuery({
+    queryKey: ["users", params],
+    queryFn: async () => {
+      const response = await api.get("/users");
+      return await response.data;
+    },
+  });
+}
