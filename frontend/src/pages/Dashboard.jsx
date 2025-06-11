@@ -2,8 +2,9 @@ import React, { useContext, useState } from "react";
 import { AuthContext } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import TaskCard from "../Components/TaskCard";
-import { useTasks, useUsers } from "../hooks/useApi";
+import { useTasks } from "../hooks/useApi";
 import FilterOptions from "../Components/FilterOptions.jsx";
+import Sidebar from "../Components/Sidebar.jsx";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
@@ -37,12 +38,11 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="h-screen bg-neutral-100 w-screen">
-      <div className="absolute right-10">
-        <div className="font-medium">{user.email}</div>
-        <div>{user.full_name}</div>
+    <div className="h-screen bg-neutral-100 w-screen p-6 flex">
+      <div className="flex-1">
+        <Sidebar />
       </div>
-      <div className="flex h-9/10">
+      <div className="tasks flex-4">
         {/* Tasks Display */}
         <div className="basis-4/5  p-10">
           <div className="pl-4 pr-6 flex justify-between mb-10">
