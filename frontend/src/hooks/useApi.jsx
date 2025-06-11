@@ -12,17 +12,16 @@ function authHeader() {
  */
 
 export function useTasks(params) {
-  return useQuery(
+  return useQuery({
     // queryKey
-    ["tasks", params],
+    queryKey: ["tasks", params],
     // queryFn
-    () =>
-      api
-        .get("/tasks", { params, headers: authHeader() })
-        .then((res) => res.data),
-
-    {
-      enabled: params !== null,
-    }
-  );
+    queryFn: async () => {
+      const response = await api.get("/tasks", {
+        params,
+        headers: authHeader(),
+      });
+      return await response.data;
+    },
+  });
 }

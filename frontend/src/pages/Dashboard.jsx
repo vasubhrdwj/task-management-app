@@ -3,75 +3,82 @@ import { AuthContext } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import api from "../api";
 import TaskCard from "../Components/TaskCard";
+import { useTasks } from "../hooks/useApi";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
 
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [tasks, setTasks] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
   const [userList, setUserList] = useState([]);
+  const [sortParams, setSortParams] = useState(null);
   const [showFilterOptions, setShowFilterOptions] = useState(false);
 
-  const loadTasks = async (sortParam = "", sortDesc) => {
-    const token = localStorage.getItem("accessToken");
-    setLoading(true);
-    setError(null);
+  const {
+    data: tasks,
+    isLoading: tasksLoading,
+    error: tasksError,
+  } = useTasks(user && initialized ? sortParams : null);
 
-    try {
-      const resp = await api.get(
-        `/tasks${
-          sortParam ? `?sort_by=${sortParam}&sort_desc=${sortDesc}` : ""
-        }`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setTasks(resp.data);
-    } catch (err) {
-      setError(err.message || "Failed to fetch tasks");
-    } finally {
-      setLoading(false);
-    }
+  // const loadTasks = async (sortParam = "", sortDesc) => {
+  //   const token = localStorage.getItem("accessToken");
+  //   setLoading(true);
+  //   setError(null);
+
+  //   try {
+  //     const resp = await api.get(
+  //       `/tasks${
+  //         sortParam ? `?sort_by=${sortParam}&sort_desc=${sortDesc}` : ""
+  //       }`,
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       }
+  //     );
+  //     setTasks(resp.data);
+  //   } catch (err) {
+  //     setError(err.message || "Failed to fetch tasks");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSort = (sort_by, sort_desc = "false") => {
+    setSortParams({ sort_by, sort_desc });
   };
 
-  const handleSort = (sortKey, sortDesc = "false") => {
-    loadTasks(sortKey, sortDesc);
-    setShowFilterOptions(false);
-  };
+  // useEffect(() => {
+  //   if (!initialized || !user) {
+  //     return;
+  //   }
+  //   const token = localStorage.getItem("accessToken");
 
-  useEffect(() => {
-    if (!initialized || !user) {
-      return;
-    }
-    const token = localStorage.getItem("accessToken");
+  //   let cancelled = false;
+  //   async function load() {
+  //     try {
+  //       setLoading(true);
+  //       const resp = await api.get("/tasks", {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       });
+  //       if (!cancelled) {
+  //         setTasks(resp.data);
+  //       }
+  //     } catch (err) {
+  //       if (!cancelled) {
+  //         setError(err.message || "Failed to fetch tasks");
+  //       }
+  //     } finally {
+  //       if (!cancelled) {
+  //         setLoading(false);
+  //       }
+  //     }
+  //   }
 
-    let cancelled = false;
-    async function load() {
-      try {
-        setLoading(true);
-        const resp = await api.get("/tasks", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!cancelled) {
-          setTasks(resp.data);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err.message || "Failed to fetch tasks");
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [user, initialized]);
+  //   load();
+  //   return () => {
+  //     cancelled = true;
+  //   };
+  // }, [user, initialized]);
 
   useEffect(() => {
     if (!initialized || !user) return;
@@ -147,13 +154,13 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-          {loading && <div>Loading tasks…</div>}
-          {error && <div className="text-red-600">{error}</div>}
-          {!loading && !error && tasks.length === 0 && (
+          {tasksLoading && <div>Loading tasks…</div>}
+          {tasksError && <div className="text-red-600">{tasksError}</div>}
+          {!tasksLoading && !tasksError && tasks.length === 0 && (
             <div>No tasks to show.</div>
           )}
 
-          {!loading && !error && tasks.length > 0 && (
+          {!tasksLoading && !tasksError && tasks.length > 0 && (
             <ul className="space-y-6 flex gap-6 justify-around p-6">
               {tasks.map((t) => (
                 <li key={t.id}>
