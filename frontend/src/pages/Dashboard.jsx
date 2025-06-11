@@ -11,7 +11,6 @@ const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
 
   const [sortParams, setSortParams] = useState(null);
-  const [showFilterOptions, setShowFilterOptions] = useState(false);
 
   const {
     data: tasks,
@@ -43,27 +42,12 @@ const Dashboard = () => {
         <Sidebar />
       </div>
       <div className="basis-4/5 px-12 py-2">
-        <SearchBar />
+        <SearchBar handleSort={handleSort} />
         <div className="tasks flex-4">
           {/* Tasks Display */}
           <div className="py-6">
-            <div className="flex justify-between my-6 px-2">
-              <h1 className="font-bold text-3xl">Tasks:</h1>
-              <div className="place-self-end">
-                <button
-                  onClick={() => setShowFilterOptions(true)}
-                  className="mb-1 text-lg font-semibold"
-                >
-                  Filter
-                </button>
-                {showFilterOptions && (
-                  <FilterOptions
-                    handleSort={handleSort}
-                    setShowFilterOptions={setShowFilterOptions}
-                  />
-                )}
-              </div>
-            </div>
+            <h1 className="font-bold text-3xl">Tasks:</h1>
+
             {tasksLoading && <div>Loading tasks…</div>}
             {tasksError && <div className="text-red-600">{tasksError}</div>}
             {!tasksLoading && !tasksError && tasks.length === 0 && (

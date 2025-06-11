@@ -2,7 +2,7 @@ import React from "react";
 
 const FilterOptions = ({ handleSort, setShowFilterOptions }) => {
   return (
-    <div className="absolute mt-2 right-12 w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-10 p-4 space-y-4">
+    <div className="absolute top-18 right-72 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-10 p-4 space-y-4">
       <div className="flex justify-between items-center mb-2">
         <p className="text-sm font-bold text-gray-800"> Sort By</p>
         <button
