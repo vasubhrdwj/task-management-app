@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import api from "../api";
+import TaskCard from "../Components/TaskCard";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
@@ -152,73 +153,10 @@ const Dashboard = () => {
           )}
 
           {!loading && !error && tasks.length > 0 && (
-            <ul className="space-y-6">
+            <ul className="space-y-6 flex gap-6 justify-around p-6">
               {tasks.map((t) => (
-                <li
-                  key={t.id}
-                  className="bg-white shadow rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between"
-                >
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                      {t.title}
-                    </h3>
-                    <p className="text-gray-600">{t.description}</p>
-                  </div>
-
-                  <div className="mt-4 md:mt-0 flex items-center space-x-4">
-                    <span
-                      className={`
-            px-2 py-1 rounded-full text-xs font-medium
-            ${
-              t.priority === "high"
-                ? "bg-red-100 text-red-800"
-                : t.priority === "medium"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-green-100 text-green-800"
-            }
-          `}
-                    >
-                      {t.priority.charAt(0).toUpperCase() + t.priority.slice(1)}
-                    </span>
-
-                    {/* Completion */}
-                    <span className="flex items-center space-x-1">
-                      {t.is_complete ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-green-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-gray-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      )}
-                      <span className="text-sm text-gray-700">
-                        {t.is_complete ? "Done" : "Pending"}
-                      </span>
-                    </span>
-                  </div>
+                <li key={t.id}>
+                  <TaskCard task={t} />
                 </li>
               ))}
             </ul>
