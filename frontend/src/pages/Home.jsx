@@ -3,7 +3,7 @@ import TaskCard from "../Components/TaskCard";
 
 const Home = () => {
   return (
-    <div className="m-10">
+    <div className="bg-gray-100 h-screen w-screen p-4">
       <TaskCard />
     </div>
   );
