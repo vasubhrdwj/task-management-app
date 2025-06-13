@@ -74,7 +74,7 @@ const TaskCard = ({ task }) => {
         </div>
         <div>
           <span className="font-semibold text-md">Deadline: </span>
-          {parseDate(task.due_date)}
+          {parseDate(task.deadline)}
         </div>
       </div>
     </div>

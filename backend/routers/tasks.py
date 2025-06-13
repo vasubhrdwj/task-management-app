@@ -75,7 +75,7 @@ def create_task(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not required permissions"
         )
 
-    new_task = models.Tasks(user_email=current_user.email, **task.model_dump())
+    new_task = models.Tasks(user_email=email_id, **task.model_dump())
 
     db.add(new_task)
     db.commit()

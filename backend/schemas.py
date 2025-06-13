@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, StrictBool, field_validator
 from typing import Optional, Any
-from datetime import datetime
+from datetime import datetime, date
 from .constants import Priority
 
 
@@ -22,8 +22,7 @@ class UserResponse(UserBase):
 class TaskCreate(BaseModel):
     title: str
     description: str
-    is_complete: StrictBool = False
-    due_date: datetime
+    deadline: date
     priority: Optional[Priority] = Priority.medium
 
     @field_validator("priority", mode="before")
@@ -36,10 +35,7 @@ class TaskCreate(BaseModel):
 
 
 class TaskResponse(TaskCreate):
-    due_date: datetime
     user_email: str
-
-    owner: UserResponse
 
     class Config:
         from_attributes = True
@@ -47,7 +43,7 @@ class TaskResponse(TaskCreate):
 
 
 class TaskListResponse(TaskCreate):
-    due_date: datetime
+
     user_email: str
     id: int
 
