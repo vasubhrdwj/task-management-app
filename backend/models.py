@@ -6,6 +6,7 @@ from sqlalchemy import (
     Enum,
     DateTime,
     ForeignKey,
+    Date,
 )
 from pydantic import EmailStr
 from sqlalchemy.orm import relationship, mapped_column, Mapped
@@ -13,7 +14,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from .database import Base
 from .constants import Priority
-from datetime import datetime
+from datetime import datetime, date
 
 
 class User(Base):
@@ -27,8 +28,13 @@ class User(Base):
     )
     password: Mapped[str] = mapped_column(String, nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, nullable=False)
+
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=text("now()")
+    )
+
+    deadline: Mapped[date] = mapped_column(
+        Date, server_default=text("(CURRENT_DATE + INTERVAL '10 days')")
     )
 
     task = relationship("Tasks", back_populates="owner")
