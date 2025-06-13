@@ -33,10 +33,6 @@ class User(Base):
         TIMESTAMP(timezone=True), server_default=text("now()")
     )
 
-    deadline: Mapped[date] = mapped_column(
-        Date, server_default=text("(CURRENT_DATE + INTERVAL '10 days')")
-    )
-
     task = relationship("Tasks", back_populates="owner")
 
 
@@ -47,9 +43,10 @@ class Tasks(Base):
     title: Mapped[str] = mapped_column(String, nullable=False, index=True)
     description: Mapped[str] = mapped_column(String(255))
     is_complete: Mapped[bool] = mapped_column(Boolean, server_default="False")
-    due_date: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=text("now()")
+    deadline: Mapped[date] = mapped_column(
+        Date, server_default=text("CURRENT_DATE + INTERVAL '10 days'")
     )
+
     priority: Mapped[Enum] = mapped_column(
         Enum(
             Priority,
@@ -58,6 +55,10 @@ class Tasks(Base):
         ),
         nullable=False,
         server_default=Priority.medium.value,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("now()")
     )
 
     # User relationship
