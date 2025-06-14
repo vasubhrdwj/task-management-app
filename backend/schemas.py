@@ -42,6 +42,21 @@ class TaskResponse(TaskCreate):
         use_enum_values = True
 
 
+class TaskUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    deadline: Optional[date] = None
+    priority: Optional[Priority] = None
+
+    @field_validator("priority", mode="before")
+    @classmethod
+    def lower_case(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            return value.lower()
+
+        return value
+
+
 class TaskListResponse(TaskCreate):
 
     user_email: str
