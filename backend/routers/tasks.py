@@ -40,9 +40,9 @@ def get_tasks(
 
     elif sort_by == "due_date":
         if sort_desc == False:
-            tasks = tasks.order_by(models.Tasks.due_date).all()
+            tasks = tasks.order_by(models.Tasks.deadline).all()
         else:
-            tasks = tasks.order_by(models.Tasks.due_date.desc()).all()
+            tasks = tasks.order_by(models.Tasks.deadline.desc()).all()
 
     elif sort_by == "status":
         if sort_desc == False:
