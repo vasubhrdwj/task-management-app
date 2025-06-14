@@ -105,13 +105,13 @@ def get_task(
 
 
 # Update
-@router.put(
+@router.patch(
     "/update/{id}",
     response_model=schemas.TaskResponse,
     status_code=status.HTTP_202_ACCEPTED,
 )
 def update_task(
-    task: schemas.TaskCreate,
+    task: schemas.TaskUpdate,
     id: int,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
@@ -124,16 +124,17 @@ def update_task(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"task with id:{id} not found"
         )
 
-    query_task_email = query_task_instance.user_email
-
-    if query_task_email != current_user.email:
+    if query_task_instance.user_email != current_user.email:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Cannot update other users task",
         )
 
-    query_task.update(task.model_dump(), synchronize_session=False)  # type: ignore[reportGeneralTypeIssues]
-    db.commit()
+    updated_data = task.model_dump(exclude_unset=True)
+
+    if updated_data:
+        query_task.update(updated_data, synchronize_session=False)  # type: ignore[reportGeneralTypeIssues]
+        db.commit()
 
     updated_task = query_task.first()
 
