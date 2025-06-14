@@ -22,6 +22,8 @@ const TaskCard = ({ task }) => {
       year: "numeric",
     });
   };
+
+  const toggleComplete = () => {};
   return (
     <div className="w-78 h-[420px] border-1 py-4 rounded-2xl bg-white shadow-lg shadow-gray-400">
       {/* Title */}
@@ -29,16 +31,18 @@ const TaskCard = ({ task }) => {
         {task.title}
       </div>
       {/* Priority Bar */}
-      <div className="h-1/7 bg-stone-300 p-2 text-lg flex justify-between items-center">
-        <div className="border-1 p-1 pl-2 pr-2 w-4/10 rounded-md bg-white m-1">
-          <p className="text-xs text-center">&#10003; Mark Complete</p>
+      <div className="h-1/7 bg-stone-200 p-2 text-lg flex justify-between items-center">
+        <div className="border-1 px-2 py-2 w-4/10 rounded-md bg-white m-1 flex items-center justify-center hover:bg-teal-500">
+          <button className="text-xs " onClick={() =>toggleComplete()}>
+            &#10003; Mark Complete
+          </button>
         </div>
         <div className="flex items-center gap-1">
           <p className="pt-0.5">
             <MdEditNote size={28} />
           </p>
           <p>
-            <MdDeleteOutline size={24} />
+            <MdDeleteOutline size={24} color={"red"} />
           </p>
         </div>
       </div>

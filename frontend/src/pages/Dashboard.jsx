@@ -3,7 +3,7 @@ import { AuthContext } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import TaskCard from "../Components/TaskCard";
 import { useTasks } from "../hooks/useApi";
-import FilterOptions from "../Components/FilterOptions.jsx";
+
 import Sidebar from "../Components/Sidebar.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
 
