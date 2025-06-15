@@ -24,7 +24,7 @@ def get_tasks(
 ):
     tasks = db.query(models.Tasks).filter(models.Tasks.user_email == current_user.email)
     if not sort_by:
-        tasks = tasks.all()
+        tasks = tasks.order_by(models.Tasks.id).all()
 
     elif sort_by == "priority":
         priority_order = case(
