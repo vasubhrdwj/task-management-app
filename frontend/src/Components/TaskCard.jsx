@@ -38,6 +38,16 @@ const TaskCard = ({ task, params }) => {
     const status = !task.is_complete;
     updateTask({ taskId: task.id, updates: { is_complete: status } });
   };
+
+  const openEditor = () => {
+    setForm({
+      title: task.title,
+      description: task.description,
+      deadline: task.deadline,
+      priority: task.priority,
+    });
+    setIsEditing(true);
+  };
   return (
     <div className="w-78 h-[420px] border-1 py-4 rounded-2xl bg-white shadow-lg shadow-gray-400">
       {/* Title */}
@@ -57,13 +67,7 @@ const TaskCard = ({ task, params }) => {
           <button
             className="pt-0.5"
             onClick={() => {
-              setForm({
-                title: task.title,
-                description: task.description,
-                priority: task.priority,
-                deadline: task.deadline,
-              });
-              setIsEditing(true);
+              openEditor();
             }}
           >
             <MdEditNote size={28} />
@@ -109,6 +113,7 @@ const TaskCard = ({ task, params }) => {
         </div>
       </div>
 
+      {/* Modal Content */}
       {isEditing && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 w-96">
@@ -165,6 +170,34 @@ const TaskCard = ({ task, params }) => {
                 <option value="low">Low</option>
               </select>
             </label>
+
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-gray-200 rounded"
+                onClick={() => setIsEditing(false)}
+                disabled={isLoading}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded"
+                onClick={() => {
+                  updateTask({
+                    taskId: task.id,
+                    updates: {
+                      title: form.title,
+                      description: form.description,
+                      deadline: form.deadline,
+                      priority: form.priority,
+                    },
+                  });
+                  setIsEditing(false);
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? "Saving…" : "Save"}
+              </button>
+            </div>
           </div>
         </div>
       )}
