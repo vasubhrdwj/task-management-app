@@ -13,7 +13,7 @@ const TaskCard = ({ task, params }) => {
     deadline: task.deadline,
   });
 
-  const mutation = useUpdateTask({ params });
+  const { mutate: updateTask, isLoading } = useUpdateTask({ params });
 
   const getPriorityClasses = (priority) => {
     switch (priority) {
@@ -36,7 +36,7 @@ const TaskCard = ({ task, params }) => {
 
   const toggleComplete = () => {
     const status = !task.is_complete;
-    mutation.mutate({ taskId: task.id, updates: { is_complete: status } });
+    updateTask({ taskId: task.id, updates: { is_complete: status } });
   };
   return (
     <div className="w-78 h-[420px] border-1 py-4 rounded-2xl bg-white shadow-lg shadow-gray-400">
@@ -46,15 +46,28 @@ const TaskCard = ({ task, params }) => {
       </div>
       {/* Priority Bar */}
       <div className="h-1/7 bg-stone-200 p-2 text-lg flex justify-between items-center">
-        <div className="border-1 px-2 py-2 w-4/10 rounded-md bg-white m-1 flex items-center justify-center hover:bg-teal-500">
-          <button className="text-xs " onClick={() => toggleComplete()}>
-            &#10003; Mark Complete
-          </button>
-        </div>
+        <button
+          className="border-1 text-xs px-2 py-2 w-4/10 rounded-md bg-white m-1 flex items-center justify-center hover:bg-teal-500"
+          onClick={() => toggleComplete()}
+        >
+          &#10003; Mark Complete
+        </button>
+
         <div className="flex items-center gap-1">
-          <p className="pt-0.5">
+          <button
+            className="pt-0.5"
+            onClick={() => {
+              setForm({
+                title: task.title,
+                description: task.description,
+                priority: task.priority,
+                deadline: task.deadline,
+              });
+              setIsEditing(true);
+            }}
+          >
             <MdEditNote size={28} />
-          </p>
+          </button>
           <p>
             <MdDeleteOutline size={24} color={"red"} />
           </p>
@@ -95,6 +108,66 @@ const TaskCard = ({ task, params }) => {
           {parseDate(task.deadline)}
         </div>
       </div>
+
+      {isEditing && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-96">
+            {/* Title */}
+            <label className="block mb-2">
+              <span className="font-semibold">Title</span>
+              <input
+                type="text"
+                value={form.title}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, title: e.target.value }))
+                }
+                className="mt-1 block w-full border rounded px-2 py-1"
+              />
+            </label>
+
+            {/* Description */}
+            <label className="block mb-2">
+              <span className="font-semibold">Description</span>
+              <textarea
+                value={form.description}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, description: e.target.value }))
+                }
+                className="mt-1 block w-full border rounded px-2 py-1"
+              />
+            </label>
+
+            {/* Deadline */}
+            <label className="block mb-2">
+              <span className="font-semibold">Deadline</span>
+              <input
+                type="date"
+                value={form.deadline.slice(0, 10)} // “YYYY‑MM‑DD”
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, deadline: e.target.value }))
+                }
+                className="mt-1 block w-full border rounded px-2 py-1"
+              />
+            </label>
+
+            {/* Priority */}
+            <label className="block mb-4">
+              <span className="font-semibold">Priority</span>
+              <select
+                value={form.priority}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, priority: e.target.value }))
+                }
+                className="mt-1 block w-full border rounded px-2 py-1"
+              >
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
