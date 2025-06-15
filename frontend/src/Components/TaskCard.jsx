@@ -112,90 +112,96 @@ const TaskCard = ({ task, params }) => {
           {parseDate(task.deadline)}
         </div>
       </div>
-
       {/* Modal Content */}
       {isEditing && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 w-96">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl p-8 w-80 mx-4 relative">
+            {/* Close button */}
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+              onClick={() => setIsEditing(false)}
+            >
+              ✕
+            </button>
+            {/* Heading */}
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+              Edit Task
+            </h2>
+
             {/* Title */}
-            <label className="block mb-2">
-              <span className="font-semibold">Title</span>
+            <label className="block mb-4">
+              <span className="font-semibold text-gray-700">Title</span>
               <input
                 type="text"
                 value={form.title}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, title: e.target.value }))
                 }
-                className="mt-1 block w-full border rounded px-2 py-1"
+                className="mt-2 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </label>
 
             {/* Description */}
-            <label className="block mb-2">
-              <span className="font-semibold">Description</span>
+            <label className="block mb-4">
+              <span className="font-semibold text-gray-700">Description</span>
               <textarea
                 value={form.description}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
-                className="mt-1 block w-full border rounded px-2 py-1"
+                className="mt-2 block w-full border border-gray-300 rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </label>
 
-            {/* Deadline */}
-            <label className="block mb-2">
-              <span className="font-semibold">Deadline</span>
-              <input
-                type="date"
-                value={form.deadline.slice(0, 10)} // “YYYY‑MM‑DD”
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, deadline: e.target.value }))
-                }
-                className="mt-1 block w-full border rounded px-2 py-1"
-              />
-            </label>
+            <div className="flex gap-4">
+              {/* Deadline */}
+              <label className="flex-1">
+                <span className="font-semibold text-gray-700">Deadline</span>
+                <input
+                  type="date"
+                  value={form.deadline.slice(0, 10)}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, deadline: e.target.value }))
+                  }
+                  className="mt-2 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </label>
 
-            {/* Priority */}
-            <label className="block mb-4">
-              <span className="font-semibold">Priority</span>
-              <select
-                value={form.priority}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, priority: e.target.value }))
-                }
-                className="mt-1 block w-full border rounded px-2 py-1"
-              >
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
-              </select>
-            </label>
+              {/* Priority */}
+              <label className="flex-1">
+                <span className="font-semibold text-gray-700">Priority</span>
+                <select
+                  value={form.priority}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, priority: e.target.value }))
+                  }
+                  className="mt-2 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </label>
+            </div>
 
-            <div className="flex justify-end gap-2">
+            {/* Action Buttons */}
+            <div className="mt-6 flex justify-end gap-3">
               <button
-                className="px-4 py-2 bg-gray-200 rounded"
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
                 onClick={() => setIsEditing(false)}
                 disabled={isLoading}
               >
                 Cancel
               </button>
               <button
-                className="px-4 py-2 bg-blue-600 text-white rounded"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center"
                 onClick={() => {
-                  updateTask({
-                    taskId: task.id,
-                    updates: {
-                      title: form.title,
-                      description: form.description,
-                      deadline: form.deadline,
-                      priority: form.priority,
-                    },
-                  });
+                  updateTask({ taskId: task.id, updates: { ...form } });
                   setIsEditing(false);
                 }}
                 disabled={isLoading}
               >
-                {isLoading ? "Saving…" : "Save"}
+                {isLoading ? "Saving…" : "Save Changes"}
               </button>
             </div>
           </div>
