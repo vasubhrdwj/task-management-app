@@ -18,15 +18,9 @@ const Dashboard = () => {
     error: tasksError,
   } = useTasks(user && initialized ? sortParams : null);
 
-  const handleSort = (sort_by, sort_desc = "false") => {
+  const handleSort = (sort_by, sort_desc = false) => {
     setSortParams({ sort_by, sort_desc });
   };
-
-  // const {
-  //   data: userList,
-  //   isLoading: usersLoading,
-  //   error: usersError,
-  // } = useUsers(user && initialized);
 
   if (!initialized) {
     return null;

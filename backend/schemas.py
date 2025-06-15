@@ -35,7 +35,9 @@ class TaskCreate(BaseModel):
 
 
 class TaskResponse(TaskCreate):
+    id: int
     user_email: str
+    is_complete: StrictBool
 
     class Config:
         from_attributes = True
@@ -47,6 +49,7 @@ class TaskUpdate(BaseModel):
     description: Optional[str] = None
     deadline: Optional[date] = None
     priority: Optional[Priority] = None
+    is_complete: Optional[StrictBool] = None
 
     @field_validator("priority", mode="before")
     @classmethod
@@ -57,11 +60,7 @@ class TaskUpdate(BaseModel):
         return value
 
 
-class TaskListResponse(TaskCreate):
-
-    user_email: str
-    id: int
-
+class TaskListResponse(TaskResponse):
     class Config:
         from_attributes = True
 

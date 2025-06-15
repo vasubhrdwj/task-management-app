@@ -1,8 +1,11 @@
 import React from "react";
-import { MdEditNote, MdDeleteOutline } from "react-icons/md";
+import { MdEditNote, MdDeleteOutline, MdTaskAlt } from "react-icons/md";
+import useUpdateTask from "../hooks/useUpdateTask";
 
 const TaskCard = ({ task }) => {
   const dsc = task.description;
+
+  const mutation = useUpdateTask();
 
   const getPriorityClasses = (priority) => {
     switch (priority) {
@@ -23,7 +26,10 @@ const TaskCard = ({ task }) => {
     });
   };
 
-  const toggleComplete = () => {};
+  const toggleComplete = () => {
+    const status = !task.is_complete;
+    mutation.mutate({ taskId: task.id, updates: { is_complete: status } });
+  };
   return (
     <div className="w-78 h-[420px] border-1 py-4 rounded-2xl bg-white shadow-lg shadow-gray-400">
       {/* Title */}
@@ -33,7 +39,7 @@ const TaskCard = ({ task }) => {
       {/* Priority Bar */}
       <div className="h-1/7 bg-stone-200 p-2 text-lg flex justify-between items-center">
         <div className="border-1 px-2 py-2 w-4/10 rounded-md bg-white m-1 flex items-center justify-center hover:bg-teal-500">
-          <button className="text-xs " onClick={() =>toggleComplete()}>
+          <button className="text-xs " onClick={() => toggleComplete()}>
             &#10003; Mark Complete
           </button>
         </div>
