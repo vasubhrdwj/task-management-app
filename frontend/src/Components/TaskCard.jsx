@@ -1,6 +1,7 @@
 import { React, useState } from "react";
 import { MdEditNote, MdDeleteOutline, MdTaskAlt } from "react-icons/md";
 import useUpdateTask from "../hooks/useUpdateTask";
+import useDeleteTask from "../hooks/useDeleteTask";
 
 const TaskCard = ({ task, params }) => {
   const dsc = task.description;
@@ -14,6 +15,7 @@ const TaskCard = ({ task, params }) => {
   });
 
   const { mutate: updateTask, isLoading } = useUpdateTask({ params });
+  const { mutate: deleteTask } = useDeleteTask();
 
   const getPriorityClasses = (priority) => {
     switch (priority) {
@@ -48,6 +50,10 @@ const TaskCard = ({ task, params }) => {
     });
     setIsEditing(true);
   };
+
+  const handleDelete = () => {
+    deleteTask(task.id);
+  };
   return (
     <div className="w-78 h-[420px] border-1 py-4 rounded-2xl bg-white shadow-lg shadow-gray-400">
       {/* Title */}
@@ -72,9 +78,13 @@ const TaskCard = ({ task, params }) => {
           >
             <MdEditNote size={28} />
           </button>
-          <p>
+          <button
+            onClick={() => {
+              handleDelete();
+            }}
+          >
             <MdDeleteOutline size={24} color={"red"} />
-          </p>
+          </button>
         </div>
       </div>
       <div className="h-4/7 p-4 flex flex-col gap-6">
