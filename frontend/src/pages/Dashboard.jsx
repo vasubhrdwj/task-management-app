@@ -6,11 +6,15 @@ import { useTasks } from "../hooks/useApi";
 
 import Sidebar from "../Components/Sidebar.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
+import useCreateTask from "../hooks/useCreateTask.jsx";
+import TaskForm from "../Components/TaskForm.jsx";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
 
   const [sortParams, setSortParams] = useState(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const { mutate: createTask, isLoading: creating } = useCreateTask(sortParams);
 
   const {
     data: tasks,
@@ -41,6 +45,26 @@ const Dashboard = () => {
           {/* Tasks Display */}
           <div className="py-6">
             <h1 className="font-bold text-3xl">Tasks:</h1>
+            <button onClick={() => setIsAdding(true)}>+ Add Task</button>
+
+            {isAdding && (
+              <TaskForm
+                initialValues={{
+                  title: "",
+                  description: "",
+                  deadline: new Date().toISOString().slice(0, 10),
+                  priority: "medium",
+                }}
+                onSubmit={(values) => {
+                  createTask({ updates: values, user_mail: user.email });
+                  setIsAdding(false);
+                }}
+                onCancel={() => setIsAdding(false)}
+                isLoading={creating}
+                heading="Add New Task"
+                submitLabel="Create Task"
+              />
+            )}
 
             {tasksLoading && <div>Loading tasks…</div>}
             {tasksError && <div className="text-red-600">{tasksError}</div>}

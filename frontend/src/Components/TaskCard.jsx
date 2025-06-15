@@ -8,7 +8,7 @@ const TaskCard = ({ task, params }) => {
   const dsc = task.description;
 
   const [isEditing, setIsEditing] = useState(false);
-  const [form, setForm] = useState({
+  const [_, setForm] = useState({
     title: task.title,
     description: task.description,
     priority: task.priority,
@@ -124,8 +124,24 @@ const TaskCard = ({ task, params }) => {
         </div>
       </div>
       {/* Modal Content */}
-      {isEditing &&
-        TaskForm({ task, setIsEditing, form, setForm, isLoading, updateTask })}
+      {isEditing && (
+        <TaskForm
+          initialValues={{
+            title: task.title,
+            description: task.description,
+            deadline: task.deadline,
+            priority: task.priority,
+          }}
+          onSubmit={(values) => {
+            updateTask({ taskId: task.id, updates: values });
+            setIsEditing(false);
+          }}
+          onCancel={() => setIsEditing(false)}
+          isLoading={isLoading}
+          heading="Edit Task"
+          submitLabel="Save Changes"
+        />
+      )}
     </div>
   );
 };

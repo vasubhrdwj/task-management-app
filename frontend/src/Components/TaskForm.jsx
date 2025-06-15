@@ -1,22 +1,31 @@
-import React from "react";
+import { useState } from "react";
 
-
-const TaskForm = ({ task, setIsEditing, form, setForm, isLoading, updateTask }) => {
+const TaskForm = ({
+  initialValues,
+  onSubmit,
+  onCancel,
+  isLoading,
+  heading = "Edit Task",
+  submitLabel = "Save Changes",
+}) => {
+  const [form, setForm] = useState(initialValues);
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-2xl p-8 w-80 mx-4 relative">
+      <div
+        className="bg-white rounded-xl shadow-2xl p-8 w-80 mx-4 relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Close button */}
         <button
           className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-          onClick={() => setIsEditing(false)}
+          onClick={onCancel}
         >
           ✕
         </button>
         {/* Heading */}
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Edit Task
+          {heading}
         </h2>
-
         {/* Title */}
         <label className="block mb-4">
           <span className="font-semibold text-gray-700">Title</span>
@@ -27,7 +36,6 @@ const TaskForm = ({ task, setIsEditing, form, setForm, isLoading, updateTask }) 
             className="mt-2 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </label>
-
         {/* Description */}
         <label className="block mb-4">
           <span className="font-semibold text-gray-700">Description</span>
@@ -39,7 +47,6 @@ const TaskForm = ({ task, setIsEditing, form, setForm, isLoading, updateTask }) 
             className="mt-2 block w-full border border-gray-300 rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </label>
-
         <div className="flex gap-4">
           {/* Deadline */}
           <label className="flex-1">
@@ -70,25 +77,21 @@ const TaskForm = ({ task, setIsEditing, form, setForm, isLoading, updateTask }) 
             </select>
           </label>
         </div>
-
         {/* Action Buttons */}
         <div className="mt-6 flex justify-end gap-3">
           <button
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-            onClick={() => setIsEditing(false)}
+            onClick={onCancel}
             disabled={isLoading}
           >
             Cancel
           </button>
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center"
-            onClick={() => {
-              updateTask({ taskId: task.id, updates: { ...form } });
-              setIsEditing(false);
-            }}
+            onClick={() => onSubmit(form)}
             disabled={isLoading}
           >
-            {isLoading ? "Saving…" : "Save Changes"}
+            {isLoading ? `${submitLabel}…` : submitLabel}
           </button>
         </div>
       </div>
