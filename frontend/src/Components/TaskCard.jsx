@@ -1,11 +1,19 @@
-import React from "react";
+import { React, useState } from "react";
 import { MdEditNote, MdDeleteOutline, MdTaskAlt } from "react-icons/md";
 import useUpdateTask from "../hooks/useUpdateTask";
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, params }) => {
   const dsc = task.description;
 
-  const mutation = useUpdateTask();
+  const [isEditing, setIsEditing] = useState(false);
+  const [form, setForm] = useState({
+    title: task.title,
+    description: task.description,
+    priority: task.priority,
+    deadline: task.deadline,
+  });
+
+  const mutation = useUpdateTask({ params });
 
   const getPriorityClasses = (priority) => {
     switch (priority) {

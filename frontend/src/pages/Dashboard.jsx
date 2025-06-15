@@ -51,7 +51,7 @@ const Dashboard = () => {
               <ul className="space-y-6 flex gap-6 justify-around p-6">
                 {tasks.map((t) => (
                   <li key={t.id}>
-                    <TaskCard task={t} />
+                    <TaskCard task={t} params={sortParams} />
                   </li>
                 ))}
               </ul>
