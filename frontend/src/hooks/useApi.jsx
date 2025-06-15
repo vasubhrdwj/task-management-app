@@ -1,10 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../api";
-
-function authHeader() {
-  const token = localStorage.getItem("accessToken");
-  return { Authorization: `Bearer ${token}` };
-}
+import authHeader from "./authHeader";
 
 /**
  * Fetches tasks, optionally with sorting params.
@@ -13,9 +9,7 @@ function authHeader() {
 
 export function useTasks(params) {
   return useQuery({
-    // queryKey
     queryKey: ["tasks", params],
-    // queryFn
     queryFn: async () => {
       const response = await api.get("/tasks", {
         params,
