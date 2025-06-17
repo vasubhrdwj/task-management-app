@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AuthContext } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import TaskCard from "../Components/TaskCard";
@@ -8,6 +8,7 @@ import Sidebar from "../Components/Sidebar.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
 import useCreateTask from "../hooks/useCreateTask.jsx";
 import TaskForm from "../Components/TaskForm.jsx";
+import Pagination from "../Components/Pagination.jsx";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
@@ -28,11 +29,19 @@ const Dashboard = () => {
   // Fetching current Page Tasks
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-  const currTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+  const currTasks =
+    !tasksLoading && tasks
+      ? tasks.slice(indexOfFirstTask, indexOfLastTask)
+      : [];
 
+  // Functions
   const handleSort = (sort_by, sort_desc = false) => {
     setSortParams({ sort_by, sort_desc });
   };
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Invalid Login
 
   if (!initialized) {
     return null;
@@ -49,10 +58,10 @@ const Dashboard = () => {
       </div>
       <div className="basis-4/5 px-12 py-2">
         <SearchBar handleSort={handleSort} />
-        <div className="tasks flex-4">
+        <div className="tasks flex-4 py-4">
           {/* Tasks Display */}
           <div className="py-6">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center pb-2">
               <h1 className="font-bold text-3xl">Tasks:</h1>
               <button
                 onClick={() => setIsAdding(true)}
@@ -87,13 +96,23 @@ const Dashboard = () => {
               <div>No tasks to show.</div>
             )}
             {!tasksLoading && !tasksError && tasks.length > 0 && (
-              <ul className="space-y-6 flex gap-6 justify-around p-6">
-                {currTasks.map((t) => (
-                  <li key={t.id}>
-                    <TaskCard task={t} params={sortParams} />
-                  </li>
-                ))}
-              </ul>
+              <>
+                <ul className="space-y-6 flex gap-8 justify-baseline p-6">
+                  {currTasks.map((t) => (
+                    <li key={t.id}>
+                      <TaskCard task={t} params={sortParams} />
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex justify-center">
+                  <Pagination
+                    tasksPerPage={tasksPerPage}
+                    totalTasks={tasks.length}
+                    paginate={paginate}
+                    currentPage={currentPage}
+                  />
+                </div>
+              </>
             )}
           </div>
         </div>
