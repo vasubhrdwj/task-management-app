@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import TaskCard from "../Components/TaskCard";
@@ -14,6 +14,9 @@ const Dashboard = () => {
 
   const [sortParams, setSortParams] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 3;
+
   const { mutate: createTask, isLoading: creating } = useCreateTask(sortParams);
 
   const {
@@ -21,6 +24,11 @@ const Dashboard = () => {
     isLoading: tasksLoading,
     error: tasksError,
   } = useTasks(user && initialized ? sortParams : null);
+
+  // Fetching current Page Tasks
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  const currTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
 
   const handleSort = (sort_by, sort_desc = false) => {
     setSortParams({ sort_by, sort_desc });
@@ -44,8 +52,15 @@ const Dashboard = () => {
         <div className="tasks flex-4">
           {/* Tasks Display */}
           <div className="py-6">
-            <h1 className="font-bold text-3xl">Tasks:</h1>
-            <button onClick={() => setIsAdding(true)}>+ Add Task</button>
+            <div className="flex justify-between items-center">
+              <h1 className="font-bold text-3xl">Tasks:</h1>
+              <button
+                onClick={() => setIsAdding(true)}
+                className="bg-gray-700 p-2 px-3 text-center text-white font-semibold rounded-lg text-lg hover:bg-gray-900"
+              >
+                + Add Task
+              </button>
+            </div>
 
             {isAdding && (
               <TaskForm
@@ -73,7 +88,7 @@ const Dashboard = () => {
             )}
             {!tasksLoading && !tasksError && tasks.length > 0 && (
               <ul className="space-y-6 flex gap-6 justify-around p-6">
-                {tasks.map((t) => (
+                {currTasks.map((t) => (
                   <li key={t.id}>
                     <TaskCard task={t} params={sortParams} />
                   </li>
