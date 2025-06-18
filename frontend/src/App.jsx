@@ -5,7 +5,6 @@ import Home from "./pages/Home";
 import Signup from "./pages/SignupPage";
 import Dashboard from "./pages/Dashboard";
 
-
 const App = () => {
   return (
     <div>
