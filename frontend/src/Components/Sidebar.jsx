@@ -40,18 +40,33 @@ const Sidebar = ({ adminPrivilege, setCurrentDisplay }) => {
           </li>
         </ul>
       </div>
-      <div className="py-4">
-        <span className="text-sm">Tasks</span>
-        <ul className="py-3 space-y-2">
-          <li
-            onClick={() => setCurrentDisplay("viewTasks")}
-            className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1"
-          >
-            <CgViewList className="inline" />
-            View Tasks
-          </li>
-        </ul>
-      </div>
+      {!adminPrivilege ? (
+        <div className="py-4">
+          <span className="text-sm">Tasks</span>
+          <ul className="py-3 space-y-2">
+            <li
+              onClick={() => setCurrentDisplay("viewTasks")}
+              className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1"
+            >
+              <CgViewList className="inline" />
+              View Tasks
+            </li>
+          </ul>
+        </div>
+      ) : (
+        <div className="py-4">
+          <span className="text-sm">Users</span>
+          <ul className="py-3 space-y-2">
+            <li
+              onClick={() => setCurrentDisplay("viewUsers")}
+              className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1"
+            >
+              <CgViewList className="inline" />
+              View Users
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

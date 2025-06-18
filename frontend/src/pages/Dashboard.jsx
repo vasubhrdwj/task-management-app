@@ -3,7 +3,8 @@ import { AuthContext } from "./contexts/AuthContext.jsx";
 import { Navigate } from "react-router-dom";
 import TasksPane from "../Components/TasksPane.jsx";
 import Sidebar from "../Components/Sidebar.jsx";
-import UsersPane from "../Components/UsersPane.jsx";
+import ProfilePane from "../Components/ProfilePane.jsx";
+import UsersPane from "./UsersPane.jsx";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
@@ -25,9 +26,12 @@ const Dashboard = () => {
   const renderContent = () => {
     switch (currentDisplay) {
       case "profile":
-        return <UsersPane user={user} />;
+        return <ProfilePane user={user} />;
       case "viewTasks":
         return <TasksPane />;
+      case "viewUsers":
+        return <UsersPane />;
+
       default:
         return <div>No content</div>;
     }
@@ -35,12 +39,14 @@ const Dashboard = () => {
   return (
     <div className="h-screen bg-neutral-100 w-screen p-6 flex">
       <div className="flex-1">
-        <Sidebar
-          adminPrivilege={adminPrivilege}
-          setCurrentDisplay={setCurrentDisplay}
-        />
+        {user && (
+          <Sidebar
+            adminPrivilege={adminPrivilege}
+            setCurrentDisplay={setCurrentDisplay}
+          />
+        )}
       </div>
-      <div className="basis-4/5 px-12 py-2">{user && renderContent()}</div>
+      <div className="basis-4/5 px-6">{user && renderContent()}</div>
     </div>
   );
 };
