@@ -2,23 +2,24 @@ from pydantic import BaseModel, EmailStr, StrictBool, field_validator
 from typing import Optional, Any
 from datetime import datetime, date
 from .constants import Priority
+from uuid import UUID
 
 
 class UserBase(BaseModel):
     email: EmailStr
     is_admin: StrictBool
-    full_name: str 
+    full_name: str
     gender: str
     dob: date
-    # cust_id
 
 
 class UserCreate(UserBase):
-
     password: str
 
 
 class UserResponse(UserBase):
+    id: UUID
+
     class Config:
         from_attributes = True
 

@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { FaTasks } from "react-icons/fa";
 import { CgProfile, CgLogOut, CgViewList } from "react-icons/cg";
-const Sidebar = ({ adminPrivilege }) => {
+import { AuthContext } from "../pages/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+const Sidebar = ({ adminPrivilege, setCurrentDisplay }) => {
+  const { setAccessToken } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setAccessToken(null);
+    navigate("/login");
+  };
+
   return (
     <div className="w-full h-full bg-slate-900 rounded-2xl p-4 text-slate-500">
       <div className="flex items-center gap-2 text-white px-1 pt-4 pb-10 border-b border-white/30 justify-center">
@@ -13,11 +24,17 @@ const Sidebar = ({ adminPrivilege }) => {
           {adminPrivilege ? "Admin Profile" : "Profile"}
         </span>
         <ul className="py-3 space-y-2">
-          <li className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1">
+          <li
+            onClick={() => setCurrentDisplay("profile")}
+            className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1"
+          >
             <CgProfile className="inline" />
             View Profile
           </li>
-          <li className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1">
+          <li
+            onClick={() => handleLogout()}
+            className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1"
+          >
             <CgLogOut className="inline" />
             Logout
           </li>
@@ -26,7 +43,10 @@ const Sidebar = ({ adminPrivilege }) => {
       <div className="py-4">
         <span className="text-sm">Tasks</span>
         <ul className="py-3 space-y-2">
-          <li className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1">
+          <li
+            onClick={() => setCurrentDisplay("viewTasks")}
+            className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1"
+          >
             <CgViewList className="inline" />
             View Tasks
           </li>
