@@ -7,10 +7,14 @@ from .constants import Priority
 class UserBase(BaseModel):
     email: EmailStr
     is_admin: StrictBool
-    full_name: Optional[str | None]
+    full_name: str 
+    gender: str
+    dob: date
+    # cust_id
 
 
 class UserCreate(UserBase):
+
     password: str
 
 

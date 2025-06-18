@@ -28,6 +28,9 @@ class User(Base):
     )
     password: Mapped[str] = mapped_column(String, nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    gender: Mapped[str] = mapped_column(String, nullable=False)
+    dob: Mapped[date] = mapped_column(Date, nullable=False)
+    cust_id: Mapped[str] = mapped_column(String, nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=text("now()")

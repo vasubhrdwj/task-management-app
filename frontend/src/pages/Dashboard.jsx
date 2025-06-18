@@ -3,6 +3,7 @@ import { AuthContext } from "./contexts/AuthContext.jsx";
 import { Navigate } from "react-router-dom";
 import TasksPane from "../Components/TasksPane.jsx";
 import Sidebar from "../Components/Sidebar.jsx";
+import UsersPane from "../Components/UsersPane.jsx";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
@@ -25,7 +26,8 @@ const Dashboard = () => {
         <Sidebar adminPrivilege={adminPrivilege} />
       </div>
       <div className="basis-4/5 px-12 py-2">
-        <TasksPane />
+        {/* <TasksPane /> */}
+        <UsersPane user={user} />
       </div>
     </div>
   );
