@@ -5,7 +5,7 @@ import { useTasks } from "../hooks/useApi";
 import SearchBar from "./SearchBar.jsx";
 import Pagination from "./Pagination.jsx";
 
-const TasksPane = () => {
+const TasksPane = ({ isAdmin, displayUser }) => {
   // Contexts
   const { user, initialized } = useContext(AuthContext);
 
@@ -16,11 +16,20 @@ const TasksPane = () => {
   //  Variables
   const tasksPerPage = 3;
 
-  const {
-    data: tasks,
-    isLoading: tasksLoading,
-    error: tasksError,
-  } = useTasks(user && initialized ? sortParams : null);
+  const { data: tasks, isLoading: tasksLoading, error: tasksError } =
+    // isAdmin
+    //   ? useTasks(
+    //       displayUser ? { user_mail: displayUser.email, sortParams } : null
+    //     )
+    useTasks(
+      !isAdmin
+        ? user && initialized
+          ? sortParams
+          : null
+        : displayUser
+        ? { user_mail: displayUser.email, sortParams }
+        : null
+    );
 
   // Fetching current Page Tasks
   const indexOfLastTask = currentPage * tasksPerPage;
@@ -46,8 +55,6 @@ const TasksPane = () => {
           <div className="flex justify-between items-center pb-2">
             <h1 className="font-bold text-3xl">Tasks:</h1>
           </div>
-
-          
 
           {tasksLoading && <div>Loading tasks…</div>}
           {tasksError && <div className="text-red-600">{tasksError}</div>}

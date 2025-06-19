@@ -13,7 +13,7 @@ import clsx from "clsx";
 import useCreateTask from "../hooks/useCreateTask";
 import TaskForm from "./TaskForm";
 
-export default function UsersPane({ setCurrentDisplay }) {
+export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
   const {
     data: usersList,
     isLoading: usersLoading,
@@ -142,7 +142,7 @@ export default function UsersPane({ setCurrentDisplay }) {
                 "focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25"
               )}
             >
-              {viewUser ? `Selected: ${viewUser}` : "Pick users…"}
+              {viewUser ? `Selected: ${viewUser.full_name}` : "Pick users…"}
               <ChevronDownIcon
                 className="pointer-events-none absolute top-1/2 right-2 h-5 w-5 -translate-y-1/2 text-white/60"
                 aria-hidden="true"
@@ -159,7 +159,7 @@ export default function UsersPane({ setCurrentDisplay }) {
               {usersList.map((user) => (
                 <ListboxOption
                   key={user.id}
-                  value={user.full_name}
+                  value={user}
                   className={({ focus, selected }) =>
                     clsx(
                       "group flex cursor-default select-none items-center gap-2 rounded-lg px-3 py-1.5",
@@ -191,7 +191,10 @@ export default function UsersPane({ setCurrentDisplay }) {
         </div>
         <div className="mx-20">
           <Button
-            onClick={() => {}}
+            onClick={() => {
+              setCurrentDisplay("viewTasks");
+              setDisplayTaskUser(viewUser);
+            }}
             className="inline-flex items-center overflow-clip w-42 leading-relaxed gap-2 rounded-md bg-gray-700 p-4 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-600 data-open:bg-gray-700"
           >
             View User Task Details

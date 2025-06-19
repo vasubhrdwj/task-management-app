@@ -10,6 +10,7 @@ const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
 
   const [currentDisplay, setCurrentDisplay] = useState("profile");
+  const [displayTaskUser, setDisplayTaskUser] = useState(null);
 
   const adminPrivilege = user && user.is_admin;
 
@@ -28,9 +29,16 @@ const Dashboard = () => {
       case "profile":
         return <ProfilePane user={user} />;
       case "viewTasks":
-        return <TasksPane />;
+        return (
+          <TasksPane isAdmin={user.is_admin} displayUser={displayTaskUser} />
+        );
       case "viewUsers":
-        return <UsersPane setCurrentDisplay={setCurrentDisplay} />;
+        return (
+          <UsersPane
+            setCurrentDisplay={setCurrentDisplay}
+            setDisplayTaskUser={setDisplayTaskUser}
+          />
+        );
 
       default:
         return <div>No content</div>;
