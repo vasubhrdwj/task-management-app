@@ -62,6 +62,6 @@ def get_user(email: str, db: Session = Depends(get_db)):
     status_code=status.HTTP_200_OK,
 )
 def get_all_users(db: Session = Depends(get_db)):
-    user = db.query(models.User).all()
+    user = db.query(models.User).filter(models.User.is_admin == False).all()
 
     return user
