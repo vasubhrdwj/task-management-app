@@ -13,7 +13,7 @@ import clsx from "clsx";
 import useCreateTask from "../hooks/useCreateTask";
 import TaskForm from "./TaskForm";
 
-export default function UsersPane() {
+export default function UsersPane({ setCurrentDisplay }) {
   const {
     data: usersList,
     isLoading: usersLoading,
@@ -22,6 +22,7 @@ export default function UsersPane() {
 
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
+  const [viewUser, setViewUser] = useState(null);
 
   const { mutate: createTask, isLoading: creating } = useCreateTask();
 
@@ -117,7 +118,7 @@ export default function UsersPane() {
               onSubmit={(values) => {
                 createTask({
                   updates: values,
-                  user_mail: selectedUsers[0].email,
+                  user_mail_list: selectedUsers.map((user) => user.email),
                 });
                 setIsAdding(false);
               }}
@@ -132,6 +133,69 @@ export default function UsersPane() {
       <div className="bg-[linear-gradient(_85.2deg,_rgba(33,3,40,1)_17.5%,_rgba(65,5,72,1)_88.7%_)]   flex items-center justify-between h-48/100 rounded-xl">
         <div className="bg-white/10 h-full w-34 px-6 py-8 leading-relaxed overflow-clip text-xl font-bold">
           See User's Tasks
+        </div>
+        <div className="relative w-72 my-6 mr-20 self-baseline">
+          <Listbox value={viewUser} onChange={setViewUser}>
+            <ListboxButton
+              className={clsx(
+                "relative block w-full rounded-lg bg-white/5 py-2.5 pr-8 pl-3 text-left text-sm text-white",
+                "focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25"
+              )}
+            >
+              {viewUser ? `Selected: ${viewUser}` : "Pick users…"}
+              <ChevronDownIcon
+                className="pointer-events-none absolute top-1/2 right-2 h-5 w-5 -translate-y-1/2 text-white/60"
+                aria-hidden="true"
+              />
+            </ListboxButton>
+            {/* 2) absolute dropdown */}
+            <ListboxOptions
+              className={clsx(
+                "absolute z-10 mt-1 left-0 w-full max-h-60 overflow-auto",
+                "rounded-xl border border-white/5 bg-white/5 p-1",
+                "focus:outline-none transition duration-100 ease-in data-leave:data-closed:opacity-0"
+              )}
+            >
+              {usersList.map((user) => (
+                <ListboxOption
+                  key={user.id}
+                  value={user.full_name}
+                  className={({ focus, selected }) =>
+                    clsx(
+                      "group flex cursor-default select-none items-center gap-2 rounded-lg px-3 py-1.5",
+                      focus && "bg-white/10",
+                      selected && "font-semibold"
+                    )
+                  }
+                >
+                  {({ selected }) => (
+                    <>
+                      <CheckIcon
+                        className={clsx(
+                          "h-5 w-5",
+                          selected ? "visible text-white" : "invisible"
+                        )}
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-white">
+                          {user.full_name}
+                        </p>
+                        <p className="text-xs text-gray-300">{user.email}</p>
+                      </div>
+                    </>
+                  )}
+                </ListboxOption>
+              ))}
+            </ListboxOptions>
+          </Listbox>
+        </div>
+        <div className="mx-20">
+          <Button
+            onClick={() => {}}
+            className="inline-flex items-center overflow-clip w-42 leading-relaxed gap-2 rounded-md bg-gray-700 p-4 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-600 data-open:bg-gray-700"
+          >
+            View User Task Details
+          </Button>
         </div>
       </div>
     </div>

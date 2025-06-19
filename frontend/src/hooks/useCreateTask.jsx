@@ -6,10 +6,14 @@ import api from "../api";
 const useCreateTask = (sortParams) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ updates, user_mail }) => {
-      const response = await api.post(`/tasks/create/${user_mail}`, updates, {
-        headers: authHeader(),
-      });
+    mutationFn: async ({ updates: task, user_mail_list: email_ids }) => {
+      const response = await api.post(
+        `/tasks/create/`,
+        { task, email_ids },
+        {
+          headers: authHeader(),
+        }
+      );
 
       return response.data;
     },

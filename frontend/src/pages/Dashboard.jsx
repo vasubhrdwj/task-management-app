@@ -30,7 +30,7 @@ const Dashboard = () => {
       case "viewTasks":
         return <TasksPane />;
       case "viewUsers":
-        return <UsersPane />;
+        return <UsersPane setCurrentDisplay={setCurrentDisplay} />;
 
       default:
         return <div>No content</div>;
