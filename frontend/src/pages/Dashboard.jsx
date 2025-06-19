@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 import TasksPane from "../Components/TasksPane.jsx";
 import Sidebar from "../Components/Sidebar.jsx";
 import ProfilePane from "../Components/ProfilePane.jsx";
-import UsersPane from "./UsersPane.jsx";
+import UsersPane from "../Components/UsersPane.jsx";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
@@ -37,7 +37,7 @@ const Dashboard = () => {
     }
   };
   return (
-    <div className="h-screen bg-neutral-100 w-screen p-6 flex">
+    <div className="h-screen bg-gray-200 w-screen p-4 flex">
       <div className="flex-1">
         {user && (
           <Sidebar
@@ -46,7 +46,7 @@ const Dashboard = () => {
           />
         )}
       </div>
-      <div className="basis-4/5 px-6">{user && renderContent()}</div>
+      <div className="basis-4/5">{user && renderContent()}</div>
     </div>
   );
 };

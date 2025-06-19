@@ -13,7 +13,7 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 @router.get(
     "/",
-    response_model=List[schemas.TaskListResponse] | str,
+    response_model=List[schemas.TaskResponse] | str,
     status_code=status.HTTP_202_ACCEPTED,
 )
 def get_tasks(
@@ -60,13 +60,13 @@ def get_tasks(
 
 # Create
 @router.post(
-    "/create/{email_id}",
-    response_model=schemas.TaskResponse,
+    "/create/",
+    response_model=List[schemas.TaskResponse],
     status_code=status.HTTP_201_CREATED,
 )
 def create_task(
     task: schemas.TaskCreate,
-    email_id: EmailStr,
+    email_ids: List[EmailStr],
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
@@ -75,13 +75,19 @@ def create_task(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not required permissions"
         )
 
-    new_task = models.Tasks(user_email=email_id, **task.model_dump())
+    created_tasks = []
 
-    db.add(new_task)
+    for email_id in email_ids:
+        new_task = models.Tasks(user_email=email_id, **task.model_dump())
+        db.add(new_task)
+        created_tasks.append(new_task)
+
     db.commit()
-    db.refresh(new_task)
 
-    return new_task
+    for curr_task in created_tasks:
+        db.refresh(curr_task)
+
+    return created_tasks
 
 
 # Read ( Get )

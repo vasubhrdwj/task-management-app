@@ -10,7 +10,7 @@ const TaskForm = ({
 }) => {
   const [form, setForm] = useState(initialValues);
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 text-black">
       <div
         className="bg-white rounded-xl shadow-2xl p-8 w-80 mx-4 relative"
         onClick={(e) => e.stopPropagation()}

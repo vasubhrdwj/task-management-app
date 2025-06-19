@@ -65,11 +65,6 @@ class TaskUpdate(BaseModel):
         return value
 
 
-class TaskListResponse(TaskResponse):
-    class Config:
-        from_attributes = True
-
-
 class UserLogin(BaseModel):
     email: EmailStr
     password: str

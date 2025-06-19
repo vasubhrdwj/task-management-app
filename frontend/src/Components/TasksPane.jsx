@@ -47,24 +47,7 @@ const TasksPane = () => {
             <h1 className="font-bold text-3xl">Tasks:</h1>
           </div>
 
-          {/* {isAdding && (
-              <TaskForm
-                initialValues={{
-                  title: "",
-                  description: "",
-                  deadline: new Date().toISOString().slice(0, 10),
-                  priority: "medium",
-                }}
-                onSubmit={(values) => {
-                  createTask({ updates: values, user_mail: user.email });
-                  setIsAdding(false);
-                }}
-                onCancel={() => setIsAdding(false)}
-                isLoading={creating}
-                heading="Add New Task"
-                submitLabel="Create Task"
-              />
-            )} */}
+          
 
           {tasksLoading && <div>Loading tasks…</div>}
           {tasksError && <div className="text-red-600">{tasksError}</div>}

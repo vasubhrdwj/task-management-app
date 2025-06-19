@@ -10,12 +10,12 @@ const UsersPaneCard = ({ user }) => {
     });
   };
   return (
-    <div className="flex items-center justify-center min-h-150 bg-gray-100">
-      <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full">
+    <div className="flex items-center justify-center min-h-150 bg-gray-200">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full">
         <div className="flex flex-col items-center">
           {/* User Icon */}
-          <div className="bg-gray-200 rounded-full p-4 mb-4">
-            <FiUser size={48} className="text-gray-400" />
+          <div className="bg-gray-400 rounded-full p-4 mb-4">
+            <FiUser size={48} className="text-gray-100" />
           </div>
 
           {/* User Info */}
