@@ -17,7 +17,7 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
     status_code=status.HTTP_202_ACCEPTED,
 )
 def get_tasks(
-    user_mail: EmailStr,
+    user_mail: Optional[EmailStr] | None,
     sort_by: str | None = None,
     sort_desc: bool = False,
     db: Session = Depends(get_db),
