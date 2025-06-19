@@ -17,12 +17,19 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
     status_code=status.HTTP_202_ACCEPTED,
 )
 def get_tasks(
+    user_mail: EmailStr,
     sort_by: str | None = None,
     sort_desc: bool = False,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
-    tasks = db.query(models.Tasks).filter(models.Tasks.user_email == current_user.email)
+    if not current_user.is_admin:
+        tasks = db.query(models.Tasks).filter(
+            models.Tasks.user_email == current_user.email
+        )
+    else:
+        tasks = db.query(models.Tasks).filter(models.Tasks.user_email == user_mail)
+
     if not sort_by:
         tasks = tasks.order_by(models.Tasks.id).all()
 
