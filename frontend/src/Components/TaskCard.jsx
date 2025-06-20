@@ -4,7 +4,7 @@ import useUpdateTask from "../hooks/useUpdateTask";
 import useDeleteTask from "../hooks/useDeleteTask";
 import TaskForm from "./TaskForm";
 
-const TaskCard = ({ task, params }) => {
+const TaskCard = ({ task, params, displayUser }) => {
   const dsc = task.description;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -15,8 +15,14 @@ const TaskCard = ({ task, params }) => {
     deadline: task.deadline,
   });
 
-  const { mutate: updateTask, isLoading } = useUpdateTask({ params });
-  const { mutate: deleteTask } = useDeleteTask();
+  const { mutate: updateTask, isLoading } = useUpdateTask({
+    user_mail: displayUser ? displayUser.email : null,
+    sortParams: params,
+  });
+  const { mutate: deleteTask } = useDeleteTask({
+    user_mail: displayUser ? displayUser.email : null,
+    sortParams: params,
+  });
 
   const getPriorityClasses = (priority) => {
     switch (priority) {

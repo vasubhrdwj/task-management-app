@@ -7,15 +7,19 @@ import authHeader from "./authHeader";
  * @param {{ sort_by?: string; sort_desc?: boolean } | null} params
  */
 
-export function useTasks(params) {
+export function useTasks({ user_mail, sortParams }) {
   return useQuery({
-    queryKey: ["tasks", params],
+    queryKey: ["tasks", user_mail, sortParams],
     queryFn: async () => {
-      const response = await api.get("/tasks", {
-        params,
-        headers: authHeader(),
-      });
-      return await response.data;
+      const response = await api.get(
+        "/tasks",
+
+        {
+          params: { user_mail, ...sortParams },
+          headers: authHeader(),
+        }
+      );
+      return response.data;
     },
   });
 }

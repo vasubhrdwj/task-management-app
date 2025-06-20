@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
 import authHeader from "./authHeader";
 
-const useUpdateTask = ({ params }) => {
+const useUpdateTask = ({ user_mail, sortParams }) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -16,7 +16,7 @@ const useUpdateTask = ({ params }) => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks", params],
+        queryKey: ["tasks", user_mail, sortParams],
         exact: false,
       });
     },

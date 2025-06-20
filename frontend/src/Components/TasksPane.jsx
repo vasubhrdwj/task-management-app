@@ -16,20 +16,17 @@ const TasksPane = ({ isAdmin, displayUser }) => {
   //  Variables
   const tasksPerPage = 3;
 
-  const { data: tasks, isLoading: tasksLoading, error: tasksError } =
-    // isAdmin
-    //   ? useTasks(
-    //       displayUser ? { user_mail: displayUser.email, sortParams } : null
-    //     )
-    useTasks(
-      !isAdmin
-        ? user && initialized
-          ? sortParams
-          : null
-        : displayUser
-        ? { user_mail: displayUser.email, sortParams }
+  const {
+    data: tasks,
+    isLoading: tasksLoading,
+    error: tasksError,
+  } = useTasks(
+    !isAdmin
+      ? user && initialized
+        ? { user_mail: null, sortParams }
         : null
-    );
+      : { user_mail: displayUser.email, sortParams }
+  );
 
   // Fetching current Page Tasks
   const indexOfLastTask = currentPage * tasksPerPage;
@@ -53,7 +50,9 @@ const TasksPane = ({ isAdmin, displayUser }) => {
         {/* Tasks Display */}
         <div className="py-6">
           <div className="flex justify-between items-center pb-2">
-            <h1 className="font-bold text-3xl">Tasks:</h1>
+            <h1 className="font-bold text-3xl">
+              Tasks {isAdmin ? "for " + displayUser.full_name : ": "}
+            </h1>
           </div>
 
           {tasksLoading && <div>Loading tasks…</div>}
@@ -66,7 +65,11 @@ const TasksPane = ({ isAdmin, displayUser }) => {
               <ul className="space-y-6 flex gap-10 justify-baseline py-6">
                 {currTasks.map((t) => (
                   <li key={t.id}>
-                    <TaskCard task={t} params={sortParams} />
+                    <TaskCard
+                      task={t}
+                      params={sortParams}
+                      displayUser={displayUser}
+                    />
                   </li>
                 ))}
               </ul>

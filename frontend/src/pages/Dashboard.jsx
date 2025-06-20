@@ -44,6 +44,7 @@ const Dashboard = () => {
         return <div>No content</div>;
     }
   };
+  
   return (
     <div className="h-screen bg-gray-200 w-screen p-4 flex">
       <div className="flex-1">
