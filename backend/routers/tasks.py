@@ -137,7 +137,10 @@ def update_task(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"task with id:{id} not found"
         )
 
-    if query_task_instance.user_email != current_user.email:
+    if (
+        not current_user.is_admin
+        and query_task_instance.user_email != current_user.email
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Cannot update other users task",
@@ -174,7 +177,7 @@ def delete_task(
 
     query_task_email = query_task_instance.user_email
 
-    if query_task_email != current_user.email:
+    if not current_user.is_admin and query_task_email != current_user.email:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Cannot delete other users task",
