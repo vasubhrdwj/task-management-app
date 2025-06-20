@@ -59,7 +59,9 @@ const TaskCard = ({ task, params, displayUser }) => {
   };
 
   const handleDelete = () => {
-    deleteTask(task.id);
+    if (window.confirm("Are you sure you want to delete this task ?")) {
+      deleteTask(task.id);
+    }
   };
   return (
     <div className="w-78 h-[420px] border-1 py-4 rounded-2xl bg-white shadow-lg shadow-gray-400">
