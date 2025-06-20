@@ -13,7 +13,7 @@ from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from .database import Base
-from .constants import Priority
+from .constants import Priority, Action
 from datetime import datetime, date
 
 
@@ -68,3 +68,59 @@ class Tasks(Base):
         String, ForeignKey("users.email", ondelete="CASCADE")
     )
     owner = relationship("User", back_populates="task")
+
+
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
+        server_default=text("now()"),
+        index=True,
+    )
+    action: Mapped[Action] = mapped_column(
+        Enum(Action, name="action_enum", create_type=True),
+        nullable=False,
+    )
+    admin_user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        index=True,
+    )
+    task_id: Mapped[int] = mapped_column(
+        ForeignKey("tasks.id", ondelete="CASCADE"),
+        index=True,
+    )
+
+    targets: Mapped[list["AuditLogTarget"]] = relationship(
+        "AuditLogTarget",
+        back_populates="log",
+        cascade="all, delete-orphan",
+    )
+
+
+class AuditLogTarget(Base):
+    __tablename__ = "audit_log_targets"
+
+    audit_log_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("audit_logs.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+
+    log: Mapped["AuditLog"] = relationship(
+        "AuditLog",
+        back_populates="targets",
+    )
+    user: Mapped["User"] = relationship("User")

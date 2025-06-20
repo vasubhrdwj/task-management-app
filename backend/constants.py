@@ -8,3 +8,9 @@ class Priority(PyEnum):
 
 
 PRIORITY_VALUES = [e.value for e in Priority]
+
+
+class Action(PyEnum):
+    INSERT_TASK = "INSERT_TASK"
+    DELETE_TASK = "DELETE_TASK"
+    UPDATE_TASK = "UPDATE_TASK"
