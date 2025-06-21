@@ -83,10 +83,23 @@ class TaskSummary(BaseModel):
     id: int
     title: str
 
+    class Config:
+        from_attributes = True
+
 
 class UserSummary(BaseModel):
     id: UUID
     email: EmailStr
+
+    class Config:
+        from_attributes = True
+
+
+class TargetSummary(BaseModel):
+    user: UserSummary
+
+    class Config:
+        from_attributes = True
 
 
 class AuditLogResponse(BaseModel):
@@ -95,7 +108,7 @@ class AuditLogResponse(BaseModel):
     action: Action
     admin_user_id: UUID
     task: Optional[TaskSummary]
-    targets: List[UserSummary]
+    targets: List[TargetSummary]
 
     class Config:
         from_attributes = True

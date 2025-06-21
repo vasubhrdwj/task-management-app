@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from .database import Base, engine
-from .routers import user, tasks, auth
+from .routers import user, tasks, auth, logs
 from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -35,3 +35,4 @@ def root():
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(tasks.router)
+app.include_router(logs.router)
