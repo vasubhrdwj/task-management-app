@@ -217,6 +217,22 @@ def delete_task(
             detail=f"Cannot delete other users task",
         )
 
+    log: models.AuditLog = models.AuditLog(
+        action=Action.DELETE_TASK,
+        admin_user_id=current_user.id,
+        task_id=query_task_instance.id,
+    )
+
+    target_user: models.User = (
+        db.query(models.User).filter(models.User.email == query_task_email).one()
+    )
+
+    log.targets.append(models.AuditLogTarget(user_id=target_user.id))
+    db.add(log)
+
+    db.flush()
+
     query_task.delete(synchronize_session=False)
     db.commit()
+
     return Response(status_code=status.HTTP_204_NO_CONTENT)

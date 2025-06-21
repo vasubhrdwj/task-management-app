@@ -94,7 +94,8 @@ class AuditLog(Base):
         index=True,
     )
     task_id: Mapped[int] = mapped_column(
-        ForeignKey("tasks.id", ondelete="CASCADE"),
+        ForeignKey("tasks.id", ondelete="SET NULL"),
+        nullable=True,
         index=True,
     )
 
