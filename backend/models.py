@@ -15,6 +15,7 @@ import uuid
 from .database import Base
 from .constants import Priority, Action
 from datetime import datetime, date
+from typing import Optional
 
 
 class User(Base):
@@ -99,10 +100,13 @@ class AuditLog(Base):
         index=True,
     )
 
+    task: Mapped[Optional["Tasks"]] = relationship("Tasks", lazy="joined")
+
     targets: Mapped[list["AuditLogTarget"]] = relationship(
         "AuditLogTarget",
         back_populates="log",
         cascade="all, delete-orphan",
+        lazy="joined",
     )
 
 

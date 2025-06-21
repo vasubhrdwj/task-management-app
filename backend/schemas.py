@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, StrictBool, field_validator
-from typing import Optional, Any
+from typing import Optional, Any, List
 from datetime import datetime, date
-from .constants import Priority
+from .constants import Priority, Action
 from uuid import UUID
 
 
@@ -77,3 +77,25 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+
+class TaskSummary(BaseModel):
+    id: int
+    title: str
+
+
+class UserSummary(BaseModel):
+    id: UUID
+    email: EmailStr
+
+
+class AuditLogResponse(BaseModel):
+    id: UUID
+    created_at: datetime
+    action: Action
+    admin_user_id: UUID
+    task: Optional[TaskSummary]
+    targets: List[UserSummary]
+
+    class Config:
+        from_attributes = True
