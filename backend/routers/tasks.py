@@ -2,11 +2,11 @@ from fastapi import APIRouter, status, Response, HTTPException, Depends
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from pydantic import EmailStr
-from .. import models, schemas, utils
+from .. import models, schemas
 from backend.database import get_db
 from ..routers import oauth2
 from sqlalchemy import case
-from ..constants import Priority
+from ..constants import Priority, Action
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -94,6 +94,24 @@ def create_task(
     for curr_task in created_tasks:
         db.refresh(curr_task)
 
+        # Target User
+        target_user: models.User = (
+            db.query(models.User).filter(models.User.email == curr_task.user_email)
+        ).one()
+
+        # Audit log creation
+        log = models.AuditLog(
+            action=Action.CREATE_TASK,
+            admin_user_id=current_user.id,
+            task_id=curr_task.id,
+        )
+
+        log.targets.append(models.AuditLogTarget(user_id=target_user.id))
+
+        db.add(log)
+
+    db.commit()
+
     return created_tasks
 
 
@@ -150,6 +168,22 @@ def update_task(
 
     if updated_data:
         query_task.update(updated_data, synchronize_session=False)  # type: ignore[reportGeneralTypeIssues]
+        db.commit()
+
+        log: models.AuditLog = models.AuditLog(
+            action=Action.UPDATE_TASK,
+            admin_user_id=current_user.id,
+            task_id=query_task_instance.id,
+        )
+
+        target_user: models.User = (
+            db.query(models.User)
+            .filter(models.User.email == query_task_instance.user_email)
+            .one()
+        )
+
+        log.targets.append(models.AuditLogTarget(user_id=target_user.id))
+        db.add(log)
         db.commit()
 
     updated_task = query_task.first()
