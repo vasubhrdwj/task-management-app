@@ -5,6 +5,7 @@ import TasksPane from "../Components/TasksPane.jsx";
 import Sidebar from "../Components/Sidebar.jsx";
 import ProfilePane from "../Components/ProfilePane.jsx";
 import UsersPane from "../Components/UsersPane.jsx";
+import LogsPane from "../Components/LogsPane.jsx";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
@@ -44,7 +45,7 @@ const Dashboard = () => {
         return <div>No content</div>;
     }
   };
-  
+
   return (
     <div className="h-screen bg-gray-200 w-screen p-4 flex">
       <div className="flex-1">
@@ -55,7 +56,10 @@ const Dashboard = () => {
           />
         )}
       </div>
-      <div className="basis-4/5">{user && renderContent()}</div>
+      <div className="basis-4/5">
+        {/* {user && renderContent()} */}
+        <LogsPane />
+      </div>
     </div>
   );
 };
