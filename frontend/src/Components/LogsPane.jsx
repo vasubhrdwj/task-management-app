@@ -1,14 +1,5 @@
 import React from "react";
 import useLogs from "../hooks/useLogs";
-import api from "../api";
-import authHeader from "../hooks/authHeader";
-
-const getEmail = async (id) => {
-  const response = await api.get(`/users/byid/${id}`, {
-    headers: authHeader(),
-  });
-  return response.data.email;
-};
 
 const LogsPane = () => {
   const { data, isFetching, isError } = useLogs();
@@ -22,10 +13,9 @@ const LogsPane = () => {
 
       <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg overflow-hidden">
         {data?.map((log) => {
-          const { data: adminEmail } = getEmail(log.admin_user_id);
           return (
             <li key={log.id} className="bg-white">
-              {expandLog({ log, adminEmail })}
+              {expandLog(log)}
             </li>
           );
         })}
@@ -49,7 +39,7 @@ function formatTimestamp(ts) {
   return d.toLocaleString();
 }
 
-function expandLog({ log, adminEmail }) {
+function expandLog(log) {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-2">
@@ -59,9 +49,9 @@ function expandLog({ log, adminEmail }) {
         </span>
       </div>
 
-      <div className="text-sm mb-2">
-        <strong>Admin ID:</strong> {adminEmail}
-      </div>
+      {/* <div className="text-sm mb-2">
+        <strong>Admin ID:</strong> {log.admin_user_id}
+      </div> */}
 
       <div className="text-sm mb-1">
         <strong>Task:</strong>{" "}

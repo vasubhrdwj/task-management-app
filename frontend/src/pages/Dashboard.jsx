@@ -40,6 +40,8 @@ const Dashboard = () => {
             setDisplayTaskUser={setDisplayTaskUser}
           />
         );
+      case "viewLogs":
+        return <LogsPane />;
 
       default:
         return <div>No content</div>;
@@ -56,10 +58,7 @@ const Dashboard = () => {
           />
         )}
       </div>
-      <div className="basis-4/5">
-        {/* {user && renderContent()} */}
-        <LogsPane />
-      </div>
+      <div className="basis-4/5">{user && renderContent()}</div>
     </div>
   );
 };

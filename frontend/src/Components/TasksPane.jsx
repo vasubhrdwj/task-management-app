@@ -75,8 +75,8 @@ const TasksPane = ({ isAdmin, displayUser }) => {
               </ul>
               <div className="flex justify-center">
                 <Pagination
-                  tasksPerPage={tasksPerPage}
-                  totalTasks={tasks.length}
+                  itemsPerPage={tasksPerPage}
+                  totalItems={tasks.length}
                   paginate={paginate}
                   currentPage={currentPage}
                 />
