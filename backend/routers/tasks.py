@@ -170,21 +170,22 @@ def update_task(
         query_task.update(updated_data, synchronize_session=False)  # type: ignore[reportGeneralTypeIssues]
         db.commit()
 
-        log: models.AuditLog = models.AuditLog(
-            action=Action.UPDATE_TASK,
-            admin_user_id=current_user.id,
-            task_id=query_task_instance.id,
-        )
+        if set(updated_data.keys()) != {"is_complete"}:
+            log: models.AuditLog = models.AuditLog(
+                action=Action.UPDATE_TASK,
+                admin_user_id=current_user.id,
+                task_id=query_task_instance.id,
+            )
 
-        target_user: models.User = (
-            db.query(models.User)
-            .filter(models.User.email == query_task_instance.user_email)
-            .one()
-        )
+            target_user: models.User = (
+                db.query(models.User)
+                .filter(models.User.email == query_task_instance.user_email)
+                .one()
+            )
 
-        log.targets.append(models.AuditLogTarget(user_id=target_user.id))
-        db.add(log)
-        db.commit()
+            log.targets.append(models.AuditLogTarget(user_id=target_user.id))
+            db.add(log)
+            db.commit()
 
     updated_task = query_task.first()
 

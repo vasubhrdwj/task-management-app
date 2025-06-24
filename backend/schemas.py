@@ -109,6 +109,6 @@ class AuditLogResponse(BaseModel):
     admin_user_id: UUID
     task: Optional[TaskSummary]
     targets: List[TargetSummary]
-
+   
     class Config:
         from_attributes = True
