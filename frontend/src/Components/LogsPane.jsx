@@ -2,6 +2,8 @@ import React from "react";
 import useLogs from "../hooks/useLogs";
 
 const LogsPane = () => {
+  //   const [currentPage, setCurrentPage] = useState(1);
+
   const { data, isFetching, isError } = useLogs();
 
   return (

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { FaTasks } from "react-icons/fa";
+import { FaTasks, FaUsers } from "react-icons/fa";
 import { CgProfile, CgLogOut, CgViewList } from "react-icons/cg";
 import { AuthContext } from "../pages/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -54,17 +54,31 @@ const Sidebar = ({ adminPrivilege, setCurrentDisplay }) => {
           </ul>
         </div>
       ) : (
-        <div className="py-4">
-          <span className="text-sm">Users</span>
-          <ul className="py-3 space-y-2">
-            <li
-              onClick={() => setCurrentDisplay("viewUsers")}
-              className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1"
-            >
-              <CgViewList className="inline" />
-              View Users
-            </li>
-          </ul>
+        <div>
+          <div className="py-4">
+            <span className="text-sm">Users</span>
+            <ul className="py-3 space-y-2">
+              <li
+                onClick={() => setCurrentDisplay("viewUsers")}
+                className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1"
+              >
+                <FaUsers className="inline" />
+                View Users
+              </li>
+            </ul>
+          </div>
+          <div className="py-4">
+            <span className="text-sm">Logs</span>
+            <ul className="py-3 space-y-2">
+              <li
+                onClick={() => setCurrentDisplay("viewLogs")}
+                className="text-md items-center flex gap-2 hover:bg-gray-700 rounded-md px-4 py-1"
+              >
+                <CgViewList className="inline" />
+                View Logs
+              </li>
+            </ul>
+          </div>
         </div>
       )}
     </div>
