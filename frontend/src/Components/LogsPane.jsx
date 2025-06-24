@@ -1,5 +1,14 @@
 import React from "react";
 import useLogs from "../hooks/useLogs";
+import api from "../api";
+import authHeader from "../hooks/authHeader";
+
+const getEmail = async (id) => {
+  const response = await api.get(`/users/byid/${id}`, {
+    headers: authHeader(),
+  });
+  return response.data.email;
+};
 
 const LogsPane = () => {
   const { data, isFetching, isError } = useLogs();
@@ -12,13 +21,15 @@ const LogsPane = () => {
       )}
 
       <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg overflow-hidden">
-        {data?.map((log) => (
-          <li key={log.id} className="bg-white">
-            {expandLog(log)}
-          </li>
-        ))}
+        {data?.map((log) => {
+          const { data: adminEmail } = getEmail(log.admin_user_id);
+          return (
+            <li key={log.id} className="bg-white">
+              {expandLog({ log, adminEmail })}
+            </li>
+          );
+        })}
 
-        {/* fallback for empty list */}
         {!isFetching && !data?.length && (
           <li className="p-4 text-center text-gray-500">No logs found.</li>
         )}
@@ -38,7 +49,7 @@ function formatTimestamp(ts) {
   return d.toLocaleString();
 }
 
-function expandLog(log) {
+function expandLog({ log, adminEmail }) {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-2">
@@ -49,17 +60,15 @@ function expandLog(log) {
       </div>
 
       <div className="text-sm mb-2">
-        <strong>Admin ID:</strong> {log.admin_user_id}
+        <strong>Admin ID:</strong> {adminEmail}
       </div>
 
-      {log && (
-        <div className="text-sm mb-1">
-          <strong>Task:</strong>{" "}
-          {log.task
-            ? `${log.task.title} (#${log.task.id})`
-            : "Task removed or no longer available"}
-        </div>
-      )}
+      <div className="text-sm mb-1">
+        <strong>Task:</strong>{" "}
+        {log.task
+          ? `${log.task.title} (#${log.task.id})`
+          : "Task removed or no longer available"}
+      </div>
 
       {log.targets?.length > 0 && (
         <div className="text-sm">
