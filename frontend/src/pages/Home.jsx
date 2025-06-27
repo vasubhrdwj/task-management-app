@@ -1,10 +1,10 @@
 import React from "react";
-import TaskCard from "../Components/TaskCard";
+import SuggestTaskPane from "../Components/SuggestTaskPane";
 
 const Home = () => {
   return (
     <div className="bg-gray-100 h-screen w-screen p-10">
-      <TaskCard />
+      <SuggestTaskPane />
     </div>
   );
 };
