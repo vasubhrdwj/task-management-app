@@ -7,6 +7,11 @@ from backend.database import get_db
 from ..routers import oauth2
 from sqlalchemy import case
 from ..constants import Priority, Action
+from google import genai
+from google.genai import types
+
+import os, json
+import json
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -237,3 +242,46 @@ def delete_task(
     db.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/suggest_task/", status_code=status.HTTP_202_ACCEPTED)
+def suggest_task(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user),
+):
+    system_instruction = """
+    You are a task-suggestion engine. When you respond, you must output **only** a single JSON object with no markdown fences, no extra quotes, and no commentary.
+    """
+
+    user_prompt = """
+    Generate exactly one random development task as a JSON object with these keys:
+
+    • title (string): a concise summary  
+    • description (string): one sentence explaining what to do and why it matters  
+    • deadline (string, YYYY-MM-DD): a realistic date between tomorrow and 30 days from today  
+    • priority (string): one of "low", "medium", or "high"
+
+    Do **not** add ```json``` fences, backticks, or any surrounding quotes—output pure JSON.
+    """
+
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        config=types.GenerateContentConfig(system_instruction=system_instruction),
+        contents=user_prompt,
+    )
+
+    raw = response.text
+    if raw is not None and raw.startswith('"') and raw.endswith('"'):
+        raw = raw[1:-1]
+    #    Now un-escape the \n, \" etc:
+    if raw is not None:
+        raw = raw.encode("utf-8").decode("unicode_escape")
+    else:
+        raise HTTPException(status_code=500, detail="No response from Gemini API")
+
+    task_obj = json.loads(raw)
+
+    # 2️⃣ Return the dict — FastAPI will send it as JSON
+    return task_obj
