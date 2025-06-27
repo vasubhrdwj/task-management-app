@@ -7,7 +7,7 @@ import authHeader from "../hooks/authHeader";
 
 const LogsPane = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const logsPerPage = 5;
+  const logsPerPage = 6;
 
   const { data: logs = [], isFetching, isError } = useLogs();
 
@@ -105,15 +105,16 @@ function expandLog({ log, email }) {
         </span>
       </div>
 
-      <div className="text-sm mb-2">
-        <strong>Admin:</strong> {email}
-      </div>
-
-      <div className="text-sm mb-1">
-        <strong>Task:</strong>{" "}
-        {log.task
-          ? `${log.task.title} (#${log.task.id})`
-          : "Task removed or no longer available"}
+      <div className="flex justify-between">
+        <div className="text-sm mb-1">
+          <strong>Task:</strong>{" "}
+          {log.task
+            ? `${log.task.title} (#${log.task.id})`
+            : "Task removed or no longer available"}
+        </div>
+        <div className="text-sm mb-2">
+          <strong>Admin:</strong> {email}
+        </div>
       </div>
 
       {log.targets?.length > 0 && (
