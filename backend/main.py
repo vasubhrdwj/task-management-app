@@ -1,9 +1,14 @@
+import os
+from dotenv import load_dotenv
+
 from fastapi import FastAPI
 
 from .database import Base, engine
 from .routers import user, tasks, auth, logs
 from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv()
 
 # If not using alembic,(for dev purposes)
 # Base.metadata.create_all(bind=engine)
