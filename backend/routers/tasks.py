@@ -8,7 +8,9 @@ from ..routers import oauth2
 from sqlalchemy import case
 from ..constants import Priority, Action
 from google import genai
-from google.genai import types
+from datetime import date
+
+# from google.genai import types
 
 import os, json
 import json
@@ -252,13 +254,14 @@ def suggest_task(
     # system_instruction = """
     # You are a task-suggestion engine. When you respond, you must output **only** a single JSON object with no markdown fences, no extra quotes, and no commentary.
     # """
-
-    user_prompt = """
+    today = date.today()
+    
+    user_prompt = f"""
     Generate exactly one random development task as a JSON object with these keys:
 
     • title (string): a concise summary  
     • description (string): one sentence explaining what to do and why it matters  
-    • deadline (string, YYYY-MM-DD): a realistic date between tomorrow and 30 days from today  
+    • deadline (string, YYYY-MM-DD): a realistic date between tomorrow and 30 days from {today}
     • priority (string): one of "low", "medium", or "high"
 
     Do **not** add ```json``` fences, backticks, or any surrounding quotes—output pure JSON.
@@ -273,6 +276,7 @@ def suggest_task(
     )
 
     raw = response.text
+
     if raw is not None and raw.startswith('"') and raw.endswith('"'):
         raw = raw[1:-1]
     #    Now un-escape the \n, \" etc:

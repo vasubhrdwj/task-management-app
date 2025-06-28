@@ -62,7 +62,7 @@ const TasksPane = ({ isAdmin, displayUser }) => {
           )}
           {!tasksLoading && !tasksError && tasks.length > 0 && (
             <>
-              <ul className="space-y-6 flex gap-10 justify-baseline py-6">
+              <ul className="space-x-6 flex gap-10 justify-baseline py-6">
                 {currTasks.map((t) => (
                   <li key={t.id}>
                     <TaskCard
