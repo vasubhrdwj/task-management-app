@@ -105,6 +105,7 @@ export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
           <div>
             <Button
               onClick={() => setIsAdding(true)}
+              disabled={selectedUsers.length === 0}
               className="inline-flex items-center overflow-clip w-42 leading-relaxed gap-2 rounded-md bg-gray-700 p-4 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-600 data-open:bg-gray-700"
             >
               Add Task for Selected Users
