@@ -10,18 +10,11 @@ const TaskForm = ({
 }) => {
   const [form, setForm] = useState(initialValues);
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 text-black">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 text-black">
       <div
         className="bg-white rounded-xl shadow-2xl p-8 w-80 mx-4 relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
-        <button
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-          onClick={onCancel}
-        >
-          ✕
-        </button>
         {/* Heading */}
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           {heading}
