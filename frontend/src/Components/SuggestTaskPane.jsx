@@ -8,19 +8,28 @@ import {
   Description,
 } from "@headlessui/react";
 
-const SuggestTaskPane = () => {
+import useCreateTask from "../hooks/useCreateTask";
+
+const SuggestTaskPane = ({ selectedUsers = [] }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { data: suggestion, isFetching, isError, refetch } = useSuggestTask();
+
+  const { mutate: createTask } = useCreateTask();
 
   const handleClick = async () => {
     await refetch();
     setIsOpen(true);
   };
 
-  const handleSubmit = () => {
-    
-  }
+  const handleSubmit = (suggestion) => {
+    createTask({
+      updates: suggestion,
+      user_mail_list: selectedUsers.map((user) => user.email),
+    });
+    setIsOpen(false);
+  };
+
   return (
     <div>
       <Button
@@ -75,7 +84,7 @@ const SuggestTaskPane = () => {
                     Cancel
                   </Button>
                   <Button
-                    onClick={() => handelSubmit()}
+                    onClick={() => handleSubmit(suggestion)}
                     className="inline-flex items-center justify-center overflow-clip w-24 leading-relaxed gap-2 rounded-md bg-gray-700 p-4 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-600 data-open:bg-gray-700"
                   >
                     Add Task

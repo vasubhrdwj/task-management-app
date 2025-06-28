@@ -27,7 +27,6 @@ export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
 
   const { mutate: createTask, isLoading: creating } = useCreateTask();
 
-
   if (usersError)
     return (
       <div className="text-md text-red-600 font-semibold">
@@ -132,7 +131,7 @@ export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
               />
             )}
           </div>
-          <SuggestTaskPane />
+          <SuggestTaskPane selectedUsers={selectedUsers} />
         </div>
       </div>
       <div className="bg-[linear-gradient(_85.2deg,_rgba(33,3,40,1)_17.5%,_rgba(65,5,72,1)_88.7%_)]   flex items-center justify-between h-48/100 rounded-xl">
