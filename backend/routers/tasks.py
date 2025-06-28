@@ -249,9 +249,9 @@ def suggest_task(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
-    system_instruction = """
-    You are a task-suggestion engine. When you respond, you must output **only** a single JSON object with no markdown fences, no extra quotes, and no commentary.
-    """
+    # system_instruction = """
+    # You are a task-suggestion engine. When you respond, you must output **only** a single JSON object with no markdown fences, no extra quotes, and no commentary.
+    # """
 
     user_prompt = """
     Generate exactly one random development task as a JSON object with these keys:
@@ -268,7 +268,7 @@ def suggest_task(
 
     response = client.models.generate_content(
         model="gemini-2.5-flash",
-        config=types.GenerateContentConfig(system_instruction=system_instruction),
+        # config=types.GenerateContentConfig(system_instruction=system_instruction),
         contents=user_prompt,
     )
 
