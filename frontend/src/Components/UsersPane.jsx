@@ -12,6 +12,7 @@ import clsx from "clsx";
 
 import useCreateTask from "../hooks/useCreateTask";
 import TaskForm from "./TaskForm";
+import SuggestTaskPane from "./SuggestTaskPane";
 
 export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
   const {
@@ -25,6 +26,7 @@ export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
   const [viewUser, setViewUser] = useState(null);
 
   const { mutate: createTask, isLoading: creating } = useCreateTask();
+
 
   if (usersError)
     return (
@@ -100,34 +102,37 @@ export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
             </ListboxOptions>
           </Listbox>
         </div>
-        <div className="mx-20">
-          <Button
-            onClick={() => setIsAdding(true)}
-            className="inline-flex items-center overflow-clip w-42 leading-relaxed gap-2 rounded-md bg-gray-700 p-4 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-600 data-open:bg-gray-700"
-          >
-            Add Task for Selected Users
-          </Button>
-          {isAdding && (
-            <TaskForm
-              initialValues={{
-                title: "",
-                description: "",
-                deadline: new Date().toISOString().slice(0, 10),
-                priority: "medium",
-              }}
-              onSubmit={(values) => {
-                createTask({
-                  updates: values,
-                  user_mail_list: selectedUsers.map((user) => user.email),
-                });
-                setIsAdding(false);
-              }}
-              onCancel={() => setIsAdding(false)}
-              isLoading={creating}
-              heading="Add New Task"
-              submitLabel="Create Task"
-            />
-          )}
+        <div className="mx-20 flex flex-col items-center justify-around self-stretch py-8">
+          <div>
+            <Button
+              onClick={() => setIsAdding(true)}
+              className="inline-flex items-center overflow-clip w-42 leading-relaxed gap-2 rounded-md bg-gray-700 p-4 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-600 data-open:bg-gray-700"
+            >
+              Add Task for Selected Users
+            </Button>
+            {isAdding && (
+              <TaskForm
+                initialValues={{
+                  title: "",
+                  description: "",
+                  deadline: new Date().toISOString().slice(0, 10),
+                  priority: "medium",
+                }}
+                onSubmit={(values) => {
+                  createTask({
+                    updates: values,
+                    user_mail_list: selectedUsers.map((user) => user.email),
+                  });
+                  setIsAdding(false);
+                }}
+                onCancel={() => setIsAdding(false)}
+                isLoading={creating}
+                heading="Add New Task"
+                submitLabel="Create Task"
+              />
+            )}
+          </div>
+          <SuggestTaskPane />
         </div>
       </div>
       <div className="bg-[linear-gradient(_85.2deg,_rgba(33,3,40,1)_17.5%,_rgba(65,5,72,1)_88.7%_)]   flex items-center justify-between h-48/100 rounded-xl">
