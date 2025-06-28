@@ -196,6 +196,7 @@ export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
         </div>
         <div className="mx-20">
           <Button
+            disabled={!viewUser}
             onClick={() => {
               setCurrentDisplay("viewTasks");
               setDisplayTaskUser(viewUser);
