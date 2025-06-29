@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { Link, replace, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
 import { AuthContext } from "./contexts/AuthContext";
 

@@ -8,3 +8,5 @@ passlib
 python-jose
 alembic
 google-genai
+httpx
+pytest
