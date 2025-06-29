@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, replace, useNavigate } from "react-router-dom";
 import api from "../api";
+import { AuthContext } from "./contexts/AuthContext";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +15,14 @@ const Signup = () => {
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [success, setSuccess] = useState(false);
+
+  const { accessToken } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (accessToken) navigate("/dashboard", { replace: true });
+  }, [accessToken, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
