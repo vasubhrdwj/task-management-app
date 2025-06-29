@@ -9,6 +9,7 @@ from sqlalchemy import case
 from ..constants import Priority, Action
 from google import genai
 from datetime import date
+from ..config import settings
 
 # from google.genai import types
 
@@ -255,7 +256,7 @@ def suggest_task(
     # You are a task-suggestion engine. When you respond, you must output **only** a single JSON object with no markdown fences, no extra quotes, and no commentary.
     # """
     today = date.today()
-    
+
     user_prompt = f"""
     Generate exactly one random development task as a JSON object with these keys:
 
@@ -267,7 +268,8 @@ def suggest_task(
     Do **not** add ```json``` fences, backticks, or any surrounding quotes—output pure JSON.
     """
 
-    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    # client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
     response = client.models.generate_content(
         model="gemini-2.5-flash",

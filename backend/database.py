@@ -1,12 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
-from .config import Settings
-
-settings = Settings()
+from .config import settings
 
 
-# SQLALCHEMY_DB_URL = "postgresql://postgres:password@localhost/task_management_db"
+# SQLALCHEMY_DB_URL = "db_scheme://user_name:password@host_name/db_name"
 
 engine = create_engine(settings.SQLALCHEMY_DB_URL)
 
