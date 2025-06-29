@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import api from "../api";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,9 +11,15 @@ export default function Login() {
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
 
-  const { setAccessToken } = useContext(AuthContext);
+  const { accessToken,  setAccessToken } = useContext(AuthContext);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (accessToken) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [accessToken, navigate]);
 
   const handleToggle = () => setShow((s) => !s);
 
