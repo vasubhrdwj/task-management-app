@@ -11,7 +11,6 @@ from google import genai
 from datetime import date
 from ..config import settings
 
-# from google.genai import types
 
 import os, json
 import json
