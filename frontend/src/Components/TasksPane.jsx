@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../pages/contexts/AuthContext.jsx";
 import TaskCard from "./TaskCard";
 import { useTasks } from "../hooks/useApi";
@@ -46,6 +46,10 @@ const TasksPane = ({ isAdmin, displayUser }) => {
     !tasksLoading && tasks
       ? filtered.slice(indexOfFirstTask, indexOfLastTask)
       : [];
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query, sortParams]);
 
   // Functions
   const handleSort = (sort_by, sort_desc = false) => {
