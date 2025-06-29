@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaSearch, FaFilter } from "react-icons/fa";
 import FilterOptions from "./FilterOptions";
 
-const SearchBar = ({ handleSort }) => {
+const SearchBar = ({ query,setQuery, handleSort }) => {
   const [showFilterOptions, setShowFilterOptions] = useState(false);
 
   const handleSortFull = (sort_by, sort_desc = "false") => {
@@ -17,6 +17,8 @@ const SearchBar = ({ handleSort }) => {
         type="text"
         placeholder="Search..."
         className="flex-1 bg-transparent outline-none text-gray-800"
+        onChange={(event) => setQuery(event.target.value)}
+        value={query}
       />
 
       <button

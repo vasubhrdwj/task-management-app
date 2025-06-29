@@ -13,6 +13,9 @@ const TasksPane = ({ isAdmin, displayUser }) => {
   const [sortParams, setSortParams] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // For Searchbar (Lifting State)
+  const [query, setQuery] = useState("");
+
   //  Variables
   const tasksPerPage = 3;
 
@@ -28,12 +31,20 @@ const TasksPane = ({ isAdmin, displayUser }) => {
       : { user_mail: displayUser.email, sortParams }
   );
 
+  const filtered = tasks
+    ? tasks.filter(
+        (t) =>
+          t.title.toLowerCase().includes(query.toLowerCase()) ||
+          t.description.toLowerCase().includes(query.toLowerCase())
+      )
+    : [];
+
   // Fetching current Page Tasks
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
   const currTasks =
     !tasksLoading && tasks
-      ? tasks.slice(indexOfFirstTask, indexOfLastTask)
+      ? filtered.slice(indexOfFirstTask, indexOfLastTask)
       : [];
 
   // Functions
@@ -45,7 +56,7 @@ const TasksPane = ({ isAdmin, displayUser }) => {
 
   return (
     <div className="basis-4/5 px-12 py-2">
-      <SearchBar handleSort={handleSort} />
+      <SearchBar query={query} setQuery={setQuery} handleSort={handleSort} />
       <div className="tasks flex-4 py-4">
         {/* Tasks Display */}
         <div className="py-6">
@@ -57,10 +68,10 @@ const TasksPane = ({ isAdmin, displayUser }) => {
 
           {tasksLoading && <div>Loading tasks…</div>}
           {tasksError && <div className="text-red-600">{tasksError}</div>}
-          {!tasksLoading && !tasksError && tasks.length === 0 && (
+          {!tasksLoading && !tasksError && filtered.length === 0 && (
             <div>No tasks to show.</div>
           )}
-          {!tasksLoading && !tasksError && tasks.length > 0 && (
+          {!tasksLoading && !tasksError && filtered.length > 0 && (
             <>
               <ul className="space-x-6 flex gap-10 justify-baseline py-6">
                 {currTasks.map((t) => (
@@ -76,7 +87,7 @@ const TasksPane = ({ isAdmin, displayUser }) => {
               <div className="flex justify-center">
                 <Pagination
                   itemsPerPage={tasksPerPage}
-                  totalItems={tasks.length}
+                  totalItems={filtered.length}
                   paginate={paginate}
                   currentPage={currentPage}
                 />
