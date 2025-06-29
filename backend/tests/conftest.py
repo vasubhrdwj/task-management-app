@@ -3,6 +3,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
+import datetime
 
 # Import your application and database objects
 from backend.config import settings
@@ -12,25 +13,10 @@ from backend import models
 from backend.routers.oauth2 import create_access_token
 from backend.utils import hash_password
 
-# 1) Ensure we use a test database URL
-# If TEST_SQLALCHEMY_DB_URL is defined in .env, Settings will pick it up
-# Otherwise, fallback to an in-memory SQLite
-test_db_url = getattr(settings, "TEST_SQLALCHEMY_DB_URL", None)
-if not test_db_url:
-    test_db_url = "sqlite:///:memory:"
 
-# 2) Create a new engine and session factory for tests
-engine = create_engine(
-    test_db_url,
-    connect_args=(
-        {
-            # Needed for SQLite memory DB if accessed from multiple threads
-            "check_same_thread": False
-        }
-        if test_db_url.startswith("sqlite")
-        else {}
-    ),
-)
+test_db_url = settings.TEST_SQLALCHEMY_DB_URL
+
+engine = create_engine(test_db_url)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -73,7 +59,7 @@ def client(db_session, monkeypatch):
         finally:
             pass
 
-    monkeypatch.setattr("backend.database.get_db", override_get_db)
+    app.dependency_overrides[get_db] = override_get_db
 
     with TestClient(app) as c:
         yield c
@@ -90,7 +76,7 @@ def test_user(db_session):
         full_name="Test User",
         is_admin=False,
         gender="other",
-        dob="2000-01-01",
+        dob=datetime.date(2000, 1, 1),
         password=hash_password(
             "password123"
         ),  # or hash it if your model hashes automatically
