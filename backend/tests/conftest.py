@@ -1,9 +1,10 @@
-import os
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
 import datetime
+
+from uuid import uuid4
 
 # Import your application and database objects
 from backend.config import settings
@@ -95,3 +96,35 @@ def authorized_client(client, test_user):
     token = create_access_token({"user_id": str(test_user.id)})
     client.headers.update({"Authorization": f"Bearer {token}"})
     return client
+
+
+@pytest.fixture(scope="function")
+def admin_user(db_session):
+    """
+    Create an admin user in the database and return it.
+    """
+    user = models.User(
+        id=uuid4(),
+        email="admin@example.com",
+        full_name="Admin User",
+        is_admin=True,
+        gender="other",
+        dob=datetime.date(1990, 1, 1),
+        password=hash_password("adminpass"),
+    )
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    return user
+
+
+@pytest.fixture(scope="function")
+def token_for():
+    """
+    Returns a function which, given a user instance, returns a valid access token.
+    """
+
+    def _gen(user):
+        return create_access_token({"user_id": str(user.id)})
+
+    return _gen

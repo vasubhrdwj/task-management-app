@@ -12,7 +12,6 @@ from datetime import date
 from ..config import settings
 
 
-import os, json
 import json
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
