@@ -79,11 +79,13 @@ def test_read_users_me_unauthorized(client):
     # Optional: check the error detail
     assert res.json()["detail"] == "Not authenticated"
 
+
 # backend/tests/test_users_byid.py
 
 import pytest
 from fastapi import status
 from uuid import uuid4, UUID
+
 
 def test_get_user_by_id_success(client, test_user):
     """
@@ -100,6 +102,7 @@ def test_get_user_by_id_success(client, test_user):
     assert data["id"] == str(test_user.id)
     assert data.get("full_name") == test_user.full_name
 
+
 def test_get_user_by_id_not_found(client):
     """
     GIVEN no user with the given random UUID
@@ -114,4 +117,37 @@ def test_get_user_by_id_not_found(client):
     body = res.json()
 
     expected = f"user with email:{random_id} not found"
+    assert body["detail"] == expected
+
+
+def test_get_user_by_email_success(client, test_user):
+    """
+    GIVEN an existing user in the DB
+    WHEN GET /users/{email} is called with that user's email
+    THEN it should return 202 and the correct user data
+    """
+    url = f"/users/{test_user.email}"
+    res = client.get(url)
+    assert res.status_code == status.HTTP_202_ACCEPTED
+
+    data = res.json()
+    assert data["email"] == test_user.email
+    assert data["id"] == str(test_user.id)
+    assert data.get("full_name") == test_user.full_name
+
+
+def test_get_user_by_email_not_found(client):
+    """
+    GIVEN no user with the given email
+    WHEN GET /users/{email} is called
+    THEN it should return 404 with the proper detail message
+    """
+    random_email = "testinvalid@example.com"
+    url = f"/users/{random_email}"
+    res = client.get(url)
+    assert res.status_code == status.HTTP_404_NOT_FOUND
+
+    body = res.json()
+
+    expected = f"user with email:{random_email} not found"
     assert body["detail"] == expected
