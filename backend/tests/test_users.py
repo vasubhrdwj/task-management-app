@@ -10,7 +10,7 @@ def test_create_user_success(client, db_session):
         "password": "strongpassword123",
         "gender": "other",
         "dob": "2000-02-15",
-        "is_admin": False
+        "is_admin": False,
     }
     response = client.post("/users/create", json=payload)
     assert response.status_code == status.HTTP_201_CREATED
@@ -25,7 +25,12 @@ def test_create_user_success(client, db_session):
 
     # Verify user in database
     from backend import models
-    user_in_db = db_session.query(models.User).filter(models.User.email == payload["email"]).first()
+
+    user_in_db = (
+        db_session.query(models.User)
+        .filter(models.User.email == payload["email"])
+        .first()
+    )
     assert user_in_db is not None
     assert user_in_db.full_name == payload["full_name"]
     assert user_in_db.gender == payload["gender"]
@@ -40,8 +45,36 @@ def test_create_user_conflict(client, test_user):
         "password": "anotherpass",
         "gender": test_user.gender,
         "dob": str(test_user.dob),
-        "is_admin": test_user.is_admin
+        "is_admin": test_user.is_admin,
     }
     response = client.post("/users/create", json=payload)
     assert response.status_code == status.HTTP_409_CONFLICT
     assert response.json()["detail"] == "User Already Exists"
+
+
+def test_read_users_me_success(authorized_client, test_user):
+    """
+    GIVEN an authorized client
+    WHEN GET /me is called
+    THEN it should return status 200 and the current user's data
+    """
+    res = authorized_client.get("/users/me")
+    assert res.status_code == status.HTTP_200_OK
+
+    data = res.json()
+
+    assert data["email"] == test_user.email
+    assert "id" in data
+    assert data["id"] == str(test_user.id)
+
+
+def test_read_users_me_unauthorized(client):
+    """
+    GIVEN an unauthorized (no-token) client
+    WHEN GET /me is called
+    THEN it should return a 401
+    """
+    res = client.get("/users/me")
+    assert res.status_code == status.HTTP_401_UNAUTHORIZED
+    # Optional: check the error detail
+    assert res.json()["detail"] == "Not authenticated"

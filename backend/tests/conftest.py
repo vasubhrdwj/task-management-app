@@ -47,7 +47,7 @@ def db_session(setup_database):
 
 
 @pytest.fixture(scope="function")
-def client(db_session, monkeypatch):
+def client(db_session):
     """
     Provide a TestClient that uses the `db_session` fixture instead of the real database.
     """
