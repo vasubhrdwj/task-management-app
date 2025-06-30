@@ -1,6 +1,9 @@
 import datetime
 import pytest
 from fastapi import status
+import backend.models as models
+from backend.utils import hash_password
+from uuid import uuid4, UUID
 
 
 def test_create_user_success(client, db_session):
@@ -80,13 +83,6 @@ def test_read_users_me_unauthorized(client):
     assert res.json()["detail"] == "Not authenticated"
 
 
-# backend/tests/test_users_byid.py
-
-import pytest
-from fastapi import status
-from uuid import uuid4, UUID
-
-
 def test_get_user_by_id_success(client, test_user):
     """
     GIVEN an existing user in the DB
@@ -151,3 +147,65 @@ def test_get_user_by_email_not_found(client):
 
     expected = f"user with email:{random_email} not found"
     assert body["detail"] == expected
+
+
+def test_get_all_users_empty(client):
+    """
+    WHEN there are no non-admin users in the database
+    THEN GET /users/ should return an empty list
+    """
+    res = client.get("/users/")
+    assert res.status_code == status.HTTP_200_OK
+    assert res.json() == []
+
+
+def test_get_all_users_only_non_admin(client, db_session):
+    """
+    GIVEN one admin and two non-admin users in the DB
+    WHEN GET /users/ is called
+    THEN it should return only the two non-admin users
+    """
+
+    # create one admin user
+    admin = models.User(
+        id=uuid4(),
+        email="admin@example.com",
+        full_name="Admin User",
+        is_admin=True,
+        gender="other",
+        dob=datetime.date(1990, 1, 1),
+        password=hash_password("irrelevant"),
+    )
+    # create two regular users
+    user1 = models.User(
+        id=uuid4(),
+        email="foo@example.com",
+        full_name="Foo Bar",
+        is_admin=False,
+        gender="other",
+        dob=datetime.date(2000, 2, 2),
+        password=hash_password("irrelevant"),
+    )
+    user2 = models.User(
+        id=uuid4(),
+        email="baz@example.com",
+        full_name="Baz Quux",
+        is_admin=False,
+        gender="other",
+        dob=datetime.date(2001, 3, 3),
+        password=hash_password("irrelevant"),
+    )
+
+    db_session.add_all([admin, user1, user2])
+    db_session.commit()
+
+    res = client.get("/users/")
+    assert res.status_code == status.HTTP_200_OK
+
+    data = res.json()
+    # Should have exactly two entries, and neither is the admin
+    emails = {u["email"] for u in data}
+    assert emails == {"foo@example.com", "baz@example.com"}
+    # ids should match what we inserted
+    ids = {u["id"] for u in data}
+    assert ids == {str(user1.id), str(user2.id)}
