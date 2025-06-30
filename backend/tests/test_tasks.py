@@ -10,6 +10,7 @@ from sqlalchemy import case
 from backend import models
 from backend.schemas import Priority
 from backend.utils import hash_password
+from backend.constants import Action
 
 ENDPOINT = "/tasks/"
 
@@ -224,3 +225,89 @@ def test_non_admin_cannot_create(client, test_user, token_for):
     # now validation will pass and you'll hit your 403
     assert res.status_code == status.HTTP_403_FORBIDDEN
     assert res.json()["detail"] == "Not required permissions"
+
+
+def test_missing_email_ids_validation_error(client, admin_user, token_for):
+    # no email_ids query param
+    res = client.post(
+        "/tasks/create/",
+        json=make_payload(),
+        headers=auth_headers(admin_user, token_for),
+    )
+    # FastAPI will return 422 Unprocessable Entity for missing required list
+    assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.parametrize(
+    "targets",
+    [
+        ["test@example.com"],
+        ["test@example.com", "other@example.com"],
+    ],
+)
+def test_admin_creates_tasks_for_users(
+    client, db_session, admin_user, test_user, other_user, token_for, targets
+):
+    """
+    GIVEN an admin and some existing users
+    WHEN POST /tasks/create/?email_ids=... is called
+    THEN it creates one Task per email_id, returns them, and writes AuditLogs
+    """
+
+    # 2) Make your flat task fields…
+    flat = make_payload(
+        title="Batch Task",
+        description="Batch Desc",
+        priority=Priority.medium.value,
+    )
+
+    # 3) Wrap them under "task" so Pydantic validation passes
+    payload = {"task": flat, "email_ids": targets}
+
+    # 4) Fire the request
+    res = client.post(
+        f"/tasks/create/",
+        json=payload,
+        headers=auth_headers(admin_user, token_for),
+    )
+    assert res.status_code == status.HTTP_201_CREATED
+
+    data = res.json()
+    assert isinstance(data, list)
+    assert len(data) == len(targets)
+
+    returned_emails = {t["user_email"] for t in data}
+    assert returned_emails == set(targets)
+    for t in data:
+        assert t["title"] == flat["title"]
+        assert t["description"] == flat["description"]
+        assert t["priority"] == flat["priority"]
+        assert t["deadline"].startswith(str(flat["deadline"]))
+
+    # …then your audit‑log assertions as before…
+
+    # Check the DB directly for audit logs
+    # There should be one AuditLog per created task
+    logs = (
+        db_session.query(models.AuditLog)
+        .filter(models.AuditLog.action == Action.CREATE_TASK)
+        .all()
+    )
+    assert len(logs) == len(targets)
+
+    # Each log should refer to the admin_user and link to exactly one created Task
+    task_ids = {int(t["id"]) for t in data}
+    for log in logs:
+        assert log.admin_user_id == admin_user.id
+        assert log.task_id in task_ids
+        # And there should be exactly one AuditLogTarget per log, matching the target user
+        targets_in_log = [t.user_id for t in log.targets]
+        assert len(targets_in_log) == 1
+        # the target user_id must match one of the email_ids we sent
+        # look up id by email
+        target_email = (
+            db_session.query(models.User.email)
+            .filter(models.User.id == targets_in_log[0])
+            .scalar()
+        )
+        assert target_email in targets
