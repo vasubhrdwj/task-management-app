@@ -163,3 +163,64 @@ def test_invalid_sort_by_returns_405(client, test_user, token_for):
     )
     assert res.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
     assert res.json()["detail"] == "Not a valid value"
+
+
+@pytest.fixture
+def other_user(db_session):
+    """Create another non-admin user to assign tasks to."""
+    u = models.User(
+        id=uuid4(),
+        email="other@example.com",
+        full_name="Other User",
+        is_admin=False,
+        gender="other",
+        dob=datetime.date(1992, 2, 2),
+        password="irrelevant",
+    )
+    db_session.add(u)
+    db_session.commit()
+    return u
+
+
+def auth_headers(user, token_for):
+    return {"Authorization": f"Bearer {token_for(user)}"}
+
+
+from typing import Any, Dict
+from fastapi import status
+from backend.models import Priority
+
+
+def make_payload(
+    title: str = "T1",
+    description: str = "Desc",
+    priority: str = Priority.high.value,
+    deadline: str = "2025-12-31",
+) -> Dict[str, Any]:
+    return {
+        "title": title,
+        "description": description,
+        "priority": priority,
+        "deadline": deadline,
+    }
+
+
+def test_non_admin_cannot_create(client, test_user, token_for):
+    # 1) make the flat dict of task fields
+    flat = make_payload()  # {"title":…, "description":…, …}
+
+    # 2) build the wrapper shape the endpoint expects
+    payload = {
+        "task": flat,
+        "email_ids": [test_user.email],
+    }
+
+    res = client.post(
+        "/tasks/create/",
+        json=payload,
+        headers=auth_headers(test_user, token_for),
+    )
+
+    # now validation will pass and you'll hit your 403
+    assert res.status_code == status.HTTP_403_FORBIDDEN
+    assert res.json()["detail"] == "Not required permissions"
