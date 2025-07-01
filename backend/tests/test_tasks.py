@@ -8,9 +8,12 @@ from fastapi import status
 from sqlalchemy import case
 
 from backend import models
-from backend.schemas import Priority
 from backend.utils import hash_password
 from backend.constants import Action
+
+from typing import Any, Dict
+from fastapi import status
+from backend.models import Priority, Tasks
 
 ENDPOINT = "/tasks/"
 
@@ -37,6 +40,20 @@ def task_factory(db_session):
         return task
 
     return _make
+
+
+def make_payload(
+    title: str = "T1",
+    description: str = "Desc",
+    priority: str = Priority.high.value,
+    deadline: str = "2025-12-31",
+) -> Dict[str, Any]:
+    return {
+        "title": title,
+        "description": description,
+        "priority": priority,
+        "deadline": deadline,
+    }
 
 
 def get_hdrs_for(user, token_for):
@@ -187,28 +204,9 @@ def auth_headers(user, token_for):
     return {"Authorization": f"Bearer {token_for(user)}"}
 
 
-from typing import Any, Dict
-from fastapi import status
-from backend.models import Priority
-
-
-def make_payload(
-    title: str = "T1",
-    description: str = "Desc",
-    priority: str = Priority.high.value,
-    deadline: str = "2025-12-31",
-) -> Dict[str, Any]:
-    return {
-        "title": title,
-        "description": description,
-        "priority": priority,
-        "deadline": deadline,
-    }
-
-
 def test_non_admin_cannot_create(client, test_user, token_for):
     # 1) make the flat dict of task fields
-    flat = make_payload()  # {"title":…, "description":…, …}
+    flat = make_payload()
 
     # 2) build the wrapper shape the endpoint expects
     payload = {
@@ -254,17 +252,14 @@ def test_admin_creates_tasks_for_users(
     THEN it creates one Task per email_id, returns them, and writes AuditLogs
     """
 
-    # 2) Make your flat task fields…
     flat = make_payload(
         title="Batch Task",
         description="Batch Desc",
         priority=Priority.medium.value,
     )
 
-    # 3) Wrap them under "task" so Pydantic validation passes
     payload = {"task": flat, "email_ids": targets}
 
-    # 4) Fire the request
     res = client.post(
         f"/tasks/create/",
         json=payload,
@@ -284,10 +279,6 @@ def test_admin_creates_tasks_for_users(
         assert t["priority"] == flat["priority"]
         assert t["deadline"].startswith(str(flat["deadline"]))
 
-    # …then your audit‑log assertions as before…
-
-    # Check the DB directly for audit logs
-    # There should be one AuditLog per created task
     logs = (
         db_session.query(models.AuditLog)
         .filter(models.AuditLog.action == Action.CREATE_TASK)
@@ -295,19 +286,132 @@ def test_admin_creates_tasks_for_users(
     )
     assert len(logs) == len(targets)
 
-    # Each log should refer to the admin_user and link to exactly one created Task
     task_ids = {int(t["id"]) for t in data}
     for log in logs:
         assert log.admin_user_id == admin_user.id
         assert log.task_id in task_ids
-        # And there should be exactly one AuditLogTarget per log, matching the target user
+
         targets_in_log = [t.user_id for t in log.targets]
         assert len(targets_in_log) == 1
-        # the target user_id must match one of the email_ids we sent
-        # look up id by email
+
         target_email = (
             db_session.query(models.User.email)
             .filter(models.User.id == targets_in_log[0])
             .scalar()
         )
         assert target_email in targets
+
+
+def test_get_task_success(client, user_factory, task_factory, token_for):
+    # Arrange
+    user = user_factory(email="owner@example.com")
+    task = task_factory(user.email)
+    headers = {"Authorization": f"Bearer {token_for(user)}"}
+
+    # Act
+    res = client.get(f"/tasks/{task.id}", headers=headers)
+
+    # Assert
+    assert res.status_code == status.HTTP_202_ACCEPTED
+    data = res.json()
+    assert data["id"] == task.id
+    assert data["user_email"] == user.email
+
+
+def test_get_task_not_found(client, user_factory, token_for):
+    # Arrange
+    user = user_factory()
+    headers = {"Authorization": f"Bearer {token_for(user)}"}
+
+    # Act
+    res = client.get("/tasks/9999", headers=headers)
+
+    # Assert
+    assert res.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_update_task_success_owner(client, user_factory, task_factory, token_for):
+    # Arrange
+    user = user_factory(email="owner2@example.com")
+    task = task_factory(user.email, title="Old")
+    headers = {"Authorization": f"Bearer {token_for(user)}"}
+    payload = {"title": "New Title"}
+
+    # Act
+    res = client.patch(f"/tasks/update/{task.id}", json=payload, headers=headers)
+
+    # Assert
+    assert res.status_code == status.HTTP_202_ACCEPTED
+    data = res.json()
+    assert data["title"] == "New Title"
+
+
+def test_update_task_forbidden_non_owner(client, user_factory, task_factory, token_for):
+    # Arrange
+    owner = user_factory(email="owner3@example.com")
+    other = user_factory(email="other@example.com")
+    task = task_factory(owner.email)
+    headers = {"Authorization": f"Bearer {token_for(other)}"}
+    payload = {"description": "Hacked"}
+
+    # Act
+    res = client.patch(f"/tasks/update/{task.id}", json=payload, headers=headers)
+
+    # Assert
+    assert res.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_update_task_not_found(client, user_factory, token_for):
+    # Arrange
+    user = user_factory()
+    headers = {"Authorization": f"Bearer {token_for(user)}"}
+    payload = {"priority": Priority.low.value}
+
+    # Act
+    res = client.patch("/tasks/update/9999", json=payload, headers=headers)
+
+    # Assert
+    assert res.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_delete_task_success_owner(
+    client, user_factory, task_factory, db_session, token_for
+):
+    # Arrange
+    user = user_factory(email="owner4@example.com")
+    task = task_factory(user.email)
+    task_id = task.id  # capture ID before deletion to avoid session-expiry issues
+    headers = {"Authorization": f"Bearer {token_for(user)}"}
+
+    # Act
+    res = client.delete(f"/tasks/delete/{task_id}", headers=headers)
+
+    # Assert
+    assert res.status_code == status.HTTP_204_NO_CONTENT
+    assert db_session.query(Tasks).filter_by(id=task_id).first() is None
+
+
+def test_delete_task_forbidden_non_owner(client, user_factory, task_factory, token_for):
+    # Arrange
+    owner = user_factory(email="owner5@example.com")
+    other = user_factory(email="other2@example.com")
+    task = task_factory(owner.email)
+    headers = {"Authorization": f"Bearer {token_for(other)}"}
+
+    # Act
+    res = client.delete(f"/tasks/delete/{task.id}", headers=headers)
+
+    # Assert
+    assert res.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_delete_task_not_found(client, user_factory, token_for):
+    # Arrange
+    user = user_factory()
+    headers = {"Authorization": f"Bearer {token_for(user)}"}
+
+    # Act
+    res = client.delete("/tasks/delete/9999", headers=headers)
+
+    # Assert
+    assert res.status_code == status.HTTP_404_NOT_FOUND

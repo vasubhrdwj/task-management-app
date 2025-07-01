@@ -128,3 +128,42 @@ def token_for():
         return create_access_token({"user_id": str(user.id)})
 
     return _gen
+
+
+@pytest.fixture
+def user_factory(db_session):
+    """
+    Returns a callable to create one or more users in the test DB.
+    Usage:
+        user = user_factory()                 # default user
+        user = user_factory(email="a@b.com")  # override email
+        admin = user_factory(is_admin=True)   # make an admin
+    """
+
+    def _make(
+        email: str = "user@example.com",
+        full_name: str = "Test User",
+        password: str = "password123",
+        is_admin: bool = False,
+        gender: str = "other",
+        dob: datetime.date = datetime.date(2000, 1, 1),
+        **kwargs,
+    ):
+        # Hash the password if your model expects a raw hashed field
+        hashed = hash_password(password)
+        # Use the correct constructor argument matching your User model
+        user = models.User(
+            email=email,
+            full_name=full_name,
+            is_admin=is_admin,
+            gender=gender,
+            dob=dob,
+            password=hashed,  # replace 'password' with the actual field name for hashed password
+            **kwargs,
+        )
+        db_session.add(user)
+        db_session.commit()
+        db_session.refresh(user)
+        return user
+
+    return _make
