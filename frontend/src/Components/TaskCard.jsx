@@ -72,7 +72,9 @@ const TaskCard = ({ task, params, displayUser }) => {
       {/* Priority Bar */}
       <div className="h-1/7 bg-black/20 p-2 text-lg flex justify-between items-center">
         <button
-          className="text-xs px-2 py-2 w-4/10 rounded-md bg-white m-1 flex items-center justify-center hover:bg-teal-500"
+          className={`text-xs px-2 py-2 w-4/10 rounded-md ${
+            task.is_complete ? "bg-teal-400" : "bg-white"
+          } m-1 flex items-center justify-center hover:bg-teal-500`}
           onClick={() => toggleComplete()}
         >
           &#10003; Mark Complete
