@@ -9,33 +9,38 @@ const UsersPaneCard = ({ user }) => {
       year: "numeric",
     });
   };
+
   return (
-    <div className="flex items-center justify-center min-h-150 bg-gray-200">
-      <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full">
+    <div className="flex items-center justify-center min-h-150 bg-gray-900 p-4">
+      <div className="bg-gray-800 rounded-2xl shadow-lg p-6 max-w-sm w-full">
         <div className="flex flex-col items-center">
           {/* User Icon */}
-          <div className="bg-gray-400 rounded-full p-4 mb-4">
-            <FiUser size={48} className="text-gray-100" />
+          <div className="bg-gray-700 rounded-full p-4 mb-4">
+            <FiUser size={48} className="text-gray-300" />
           </div>
 
           {/* User Info */}
-          <h3 className="text-xl font-semibold my-2 text-gray-800">
+          <h3 className="text-xl font-semibold my-2 text-white">
             {user.full_name}
           </h3>
-          <p className="text-gray-500 mb-6">{user.email}</p>
+          <p className="text-gray-400 mb-6">{user.email}</p>
 
-          <div className="w-full divide-y divide-gray-200 px-4">
-            <div className="py-4 flex justify-between text-gray-600">
-              <span className="font-medium">Role:</span>
-              <span>{user.is_admin ? "Admin" : "User"}</span>
+          <div className="w-full divide-y divide-gray-700 px-4">
+            <div className="py-4 flex justify-between">
+              <span className="font-medium text-gray-300">Role:</span>
+              <span className="text-gray-200">
+                {user.is_admin ? "Admin" : "User"}
+              </span>
             </div>
-            <div className="py-4 flex justify-between text-gray-600">
-              <span className="font-medium">Gender:</span>
-              <span>{user.gender || "Not specified"}</span>
+            <div className="py-4 flex justify-between">
+              <span className="font-medium text-gray-300">Gender:</span>
+              <span className="text-gray-200">
+                {user.gender || "Not specified"}
+              </span>
             </div>
-            <div className="py-4 flex justify-between text-gray-600">
-              <span className="font-medium">DOB:</span>
-              <span>{parseDate(user.dob)}</span>
+            <div className="py-4 flex justify-between">
+              <span className="font-medium text-gray-300">DOB:</span>
+              <span className="text-gray-200">{parseDate(user.dob)}</span>
             </div>
           </div>
         </div>

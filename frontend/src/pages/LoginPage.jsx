@@ -43,6 +43,12 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <Link
+        to="/"
+        className="text-gray-400 hover:text-gray-200 text-lg transition fixed top-15 left-20"
+      >
+        ← Back to Home
+      </Link>
       <form
         onSubmit={handleSubmit}
         className="bg-gray-800 rounded-2xl shadow-lg p-10 w-full max-w-sm"
@@ -99,7 +105,7 @@ export default function Login() {
         </button>
 
         <p className="mt-4 text-center text-sm text-gray-400">
-          Don't have an account?{" "}
+          Don't have an account?
           <Link
             to="/signup"
             className="text-blue-400 hover:underline font-medium"

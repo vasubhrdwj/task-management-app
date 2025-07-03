@@ -9,21 +9,15 @@ import LogsPane from "../Components/LogsPane.jsx";
 
 const Dashboard = () => {
   const { user, initialized } = useContext(AuthContext);
-
   const [currentDisplay, setCurrentDisplay] = useState("profile");
   const [displayTaskUser, setDisplayTaskUser] = useState(null);
 
   const adminPrivilege = user && user.is_admin;
 
-  // Invalid Login
-
-  if (!initialized) {
-    return null;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
+  // Early exit if auth not ready
+  if (!initialized) return null;
+  // Redirect if not logged in
+  if (!user) return <Navigate to="/login" />;
 
   const renderContent = () => {
     switch (currentDisplay) {
@@ -42,14 +36,13 @@ const Dashboard = () => {
         );
       case "viewLogs":
         return <LogsPane />;
-
       default:
-        return <div>No content</div>;
+        return <div className="text-gray-400">No content</div>;
     }
   };
 
   return (
-    <div className="h-screen bg-gray-200 w-screen p-4 flex">
+    <div className="h-screen w-screen p-4 flex bg-gray-900 text-gray-100">
       <div className="flex-1">
         {user && (
           <Sidebar
@@ -58,7 +51,7 @@ const Dashboard = () => {
           />
         )}
       </div>
-      <div className="basis-4/5">{user && renderContent()}</div>
+      <div className="basis-4/5 overflow-auto">{user && renderContent()}</div>
     </div>
   );
 };

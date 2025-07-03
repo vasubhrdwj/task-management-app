@@ -7,7 +7,7 @@ import authHeader from "../hooks/authHeader";
 
 const LogsPane = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const logsPerPage = 6;
+  const logsPerPage = 5;
 
   const { data: logs = [], isFetching, isError } = useLogs();
 
@@ -26,7 +26,6 @@ const LogsPane = () => {
 
         return response.data;
       },
-
       enabled: logs.length > 0,
       staleTime: 1000 * 60 * 5,
     })),
@@ -51,17 +50,17 @@ const LogsPane = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="max-w-xl mx-auto">
-      {isFetching && <p className="text-base text-gray-600">Loading logs…</p>}
+    <div className="max-w-xl mx-auto text-gray-100">
+      {isFetching && <p className="text-base text-gray-400">Loading logs…</p>}
       {isError && (
-        <p className="text-base text-red-600">Error while fetching logs</p>
+        <p className="text-base text-red-500">Error while fetching logs</p>
       )}
 
-      <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg overflow-hidden">
+      <ul className="divide-y divide-gray-700 border border-gray-700 rounded-lg overflow-hidden">
         {currLogs?.map((log) => {
           const email = adminEmailMap[log.admin_user_id] || log.admin_user_id;
           return (
-            <li key={log.id} className="bg-white">
+            <li key={log.id} className="bg-gray-800">
               {expandLog({ log, email })}
             </li>
           );
@@ -71,12 +70,13 @@ const LogsPane = () => {
         )}
       </ul>
       {logs && (
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-4">
           <Pagination
             itemsPerPage={logsPerPage}
             totalItems={logs.length}
             paginate={paginate}
             currentPage={currentPage}
+            className="text-gray-100"
           />
         </div>
       )}
@@ -97,29 +97,31 @@ function formatTimestamp(ts) {
 
 function expandLog({ log, email }) {
   return (
-    <div className="p-4">
+    <div className="p-6">
       <div className="flex justify-between items-center mb-2">
-        <span className="font-semibold">{actionLabels[log.action]}</span>
-        <span className="text-sm text-gray-500">
+        <span className="font-semibold text-gray-200">
+          {actionLabels[log.action]}
+        </span>
+        <span className="text-sm text-gray-400">
           {formatTimestamp(log.created_at)}
         </span>
       </div>
 
-      <div className="flex justify-between">
-        <div className="text-sm mb-1">
+      <div className="flex flex-col sm:flex-row justify-between">
+        <div className="text-sm mb-1 text-gray-300">
           <strong>Task:</strong>{" "}
           {log.task
             ? `${log.task.title} (#${log.task.id})`
             : "Task removed or no longer available"}
         </div>
-        <div className="text-sm mb-2">
+        <div className="text-sm mb-2 text-gray-300">
           <strong>Admin:</strong> {email}
         </div>
       </div>
 
       {log.targets?.length > 0 && (
-        <div className="text-sm">
-          <strong>Affected user{log.targets.length > 1 ? "s" : ""}:</strong>
+        <div className="text-sm text-gray-300">
+          <strong>Affected user{log.targets.length > 1 ? "s" : ""}:</strong>{" "}
           {log.targets.map((t) => t.user.email).join(", ")}
         </div>
       )}

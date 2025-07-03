@@ -41,7 +41,7 @@ export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
   return (
     <div className="h-full w-full rounded-xl text-white flex flex-col justify-around">
       <div className="bg-gray-950 flex items-center justify-between h-5/10 rounded-xl">
-        <div className="bg-white/10 h-full w-34 px-6 py-8 leading-relaxed overflow-clip text-xl font-bold">
+        <div className="bg-white/10 h-full w-34 px-6 py-8 leading-relaxed overflow-clip text-xl font-bold rounded-tl-xl rounded-bl-xl">
           Assign Tasks
         </div>
         <div className="relative w-72 my-6 mr-20 self-baseline">
@@ -136,7 +136,7 @@ export default function UsersPane({ setCurrentDisplay, setDisplayTaskUser }) {
         </div>
       </div>
       <div className="bg-[linear-gradient(_85.2deg,_rgba(33,3,40,1)_17.5%,_rgba(65,5,72,1)_88.7%_)]   flex items-center justify-between h-48/100 rounded-xl">
-        <div className="bg-white/10 h-full w-34 px-6 py-8 leading-relaxed overflow-clip text-xl font-bold">
+        <div className="bg-white/10 h-full w-34 px-6 py-8 leading-relaxed overflow-clip text-xl font-bold rounded-tl-xl rounded-bl-xl">
           See User's Tasks
         </div>
         <div className="relative w-72 my-6 mr-20 self-baseline">

@@ -49,6 +49,12 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <Link
+        to="/"
+        className="text-gray-400 hover:text-gray-200 text-lg transition fixed top-15 left-20"
+      >
+        ← Back to Home
+      </Link>
       <form
         onSubmit={handleSubmit}
         className="bg-gray-800 rounded-2xl shadow-lg p-10 w-full max-w-md"
@@ -76,7 +82,9 @@ const Signup = () => {
 
         {/* Email */}
         <label className="block mb-8">
-          <span className="text-base font-medium text-gray-200">Email Address:</span>
+          <span className="text-base font-medium text-gray-200">
+            Email Address:
+          </span>
           <input
             type="email"
             value={email}
@@ -90,7 +98,9 @@ const Signup = () => {
         {/* Date of Birth & Gender */}
         <div className="flex flex-col sm:flex-row gap-8 mb-8">
           <label className="block w-full">
-            <span className="text-base font-medium text-gray-200">Date of Birth:</span>
+            <span className="text-base font-medium text-gray-200">
+              Date of Birth:
+            </span>
             <input
               type="date"
               value={dob}
@@ -127,7 +137,9 @@ const Signup = () => {
             onChange={(e) => setIsAdmin(e.target.checked)}
             className="h-4 w-4 text-blue-500 bg-gray-700 border-gray-600 focus:ring-2 focus:ring-blue-500 rounded"
           />
-          <span className="text-base font-medium text-gray-200">Admin account?</span>
+          <span className="text-base font-medium text-gray-200">
+            Admin account?
+          </span>
         </label>
 
         {/* Password */}
@@ -162,8 +174,11 @@ const Signup = () => {
         </button>
 
         <p className="mt-4 text-center text-sm text-gray-400">
-          Already have an account?{' '}
-          <Link to="/login" className="text-blue-400 hover:underline font-medium">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-blue-400 hover:underline font-medium"
+          >
             Login
           </Link>
         </p>
